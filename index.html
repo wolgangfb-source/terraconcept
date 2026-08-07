@@ -296,6 +296,10 @@
     transition:transform .7s ease;
   }
   .spec-card:hover .spec-img img{transform:scale(1.06);}
+  /* Foto vertical recortada a una tarjeta apaisada. El 70 % es el encuadre que
+     deja ver el borde de la piscina —que es el producto— junto a la terraza;
+     más abajo la toma se va al agua y al pastizal. */
+  .spec-img img.al-fondo{object-position:center 70%;}
   .spec-tag{
     position:absolute; top:18px; left:18px;
     background:rgba(247,245,240,0.92);
@@ -576,7 +580,7 @@
       <article class="spec-card reveal-item">
         <div class="spec-img">
           <span class="spec-tag">Piscinas</span>
-          <img src="images/piscina.jpg" alt="Instalación de bordes de piscina Terra Concept">
+          <img class="al-fondo" src="images/piscina-tarjeta.jpg" alt="Instalación de bordes de piscina Terra Concept">
         </div>
         <div class="spec-body">
           <span class="spec-kicker">Una instalación profesional</span>
