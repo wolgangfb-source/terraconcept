@@ -79,6 +79,10 @@
     letter-spacing:0.18em;
     color:var(--green);
     line-height:1.1;
+    display:flex; align-items:center;
+  }
+  .logo img{
+    height:46px; width:auto; display:block;
   }
   .logo span{
     display:block;
@@ -145,6 +149,36 @@
   .hero-overlay{
     position:absolute; inset:0;
     background:linear-gradient(180deg, rgba(20,30,20,0.55) 0%, rgba(20,30,20,0.25) 38%, rgba(18,26,17,0.85) 100%);
+  }
+  .hero-3d{
+    position:absolute; z-index:1;
+    top:150px; right:5%;
+    width:440px;
+    pointer-events:none;
+    opacity:0;
+    perspective:900px;
+    filter:drop-shadow(0 30px 34px rgba(10,16,10,0.45));
+  }
+  .hero-3d-img{
+    width:100%; height:auto; display:block;
+    transform-style:preserve-3d;
+    will-change:transform;
+  }
+  @media (max-width:1200px){
+    .hero-3d{width:340px; top:130px; right:2%;}
+  }
+  @media (max-width:900px){
+    .hero-3d{
+      width:220px; top:118px;
+      right:4%; left:auto;
+      filter:drop-shadow(0 18px 22px rgba(10,16,10,0.4));
+    }
+  }
+  @media (max-width:560px){
+    .hero-3d{width:175px; top:112px; right:3%;}
+  }
+  @media (max-width:380px){
+    .hero-3d{width:145px; top:110px; right:2%;}
   }
   .hero-content{
     position:relative; z-index:2;
@@ -217,7 +251,7 @@
 
   /* ---------- ESPECIALIDADES ---------- */
   .specialties{
-    display:grid; grid-template-columns:repeat(3, 1fr); gap:2px;
+    display:grid; grid-template-columns:repeat(2, 1fr); gap:2px;
     background:var(--line);
     border:1px solid var(--line);
   }
@@ -243,6 +277,10 @@
     padding:7px 14px;
   }
   .spec-body{padding:34px 30px 38px; flex:1; display:flex; flex-direction:column;}
+  .spec-kicker{
+    display:block; font-family:'Jost', sans-serif; font-weight:400;
+    font-size:17px; letter-spacing:0.02em; color:var(--stone); margin-bottom:4px;
+  }
   .spec-body h3{font-size:21px; margin-bottom:14px;}
   .spec-body p{color:var(--ink-soft); font-size:14.5px; flex:1;}
   .spec-list{
@@ -358,6 +396,7 @@
   .footer-logo{
     font-family:'Jost', sans-serif; font-weight:700; font-size:20px; letter-spacing:0.18em; color:var(--cream);
   }
+  .footer-logo img{height:62px; width:auto; display:block;}
   .footer-logo span{display:block; font-size:9px; font-weight:400; letter-spacing:0.3em; color:#7f8a72; margin-top:6px;}
   .footer-nav{display:flex; gap:36px; font-family:'Jost',sans-serif; font-size:12.5px; letter-spacing:0.1em; text-transform:uppercase;}
   .footer-nav a:hover{color:var(--cream);}
@@ -394,6 +433,7 @@
   @media (max-width: 560px){
     .wrap, .nav, .hero-content, .trust-inner{padding-left:22px; padding-right:22px;}
     .logo{font-size:17px;}
+    .logo img{height:36px;}
     .logo span{font-size:8px; letter-spacing:0.24em;}
     .nav{padding:16px 22px;}
     .steps{grid-template-columns:1fr;}
@@ -401,6 +441,12 @@
     .footer-top{flex-direction:column;}
     .footer-nav{flex-wrap:wrap; gap:20px;}
   }
+
+  /* ---------- SCROLL REVEAL (Motion) ---------- */
+  .reveal, .reveal-item{ opacity:0; transform:translateY(28px); }
+  .hero-content > *{ opacity:0; }
+  .spec-card{ transition:transform .35s ease, box-shadow .35s ease; }
+  .spec-card:hover{ transform:translateY(-6px); box-shadow:0 24px 48px rgba(18,26,17,0.14); }
 
   /* mobile nav panel */
   .mobile-nav{
@@ -416,12 +462,13 @@
     position:absolute; top:26px; right:28px; background:none; border:none; color:var(--cream); font-size:28px; cursor:pointer;
   }
 </style>
+<noscript><style>.reveal, .reveal-item, .hero-content > *, .hero-3d{opacity:1 !important; transform:none !important;}</style></noscript>
 </head>
 <body>
 
 <header id="site-header">
   <div class="nav">
-    <a href="#inicio" class="logo">TERRA CONCEPT<span>SOLUCIONES PARA EXTERIORES</span></a>
+    <a href="#inicio" class="logo"><img src="images/logo_v2.png" alt="Terra Concept — Soluciones para exteriores"></a>
     <nav class="nav-links">
       <a href="#inicio">Inicio</a>
       <a href="#especialidades">Especialidades</a>
@@ -449,8 +496,11 @@
 <section class="hero" id="inicio">
   <div class="hero-bg"></div>
   <div class="hero-overlay"></div>
+  <div class="hero-3d" id="hero3d">
+    <img class="hero-3d-img" src="images/borde-3d.png" alt="Borde de piscina Terra Concept">
+  </div>
   <div class="hero-content">
-    <span class="eyebrow">Bordes de piscina · Terrazas · Fachaletas</span>
+    <span class="eyebrow">Instalación de: Bordes de piscina · Terrazas · Fachaletas - Adoquines</span>
     <h1>El acabado perfecto comienza con una instalación profesional</h1>
     <p>Instalación profesional de bordes de piscina, terrazas y revestimientos de fachaletas en hormigón vibrado. Materiales de calidad, ejecución prolija y garantía en cada proyecto.</p>
     <div class="hero-actions">
@@ -461,23 +511,23 @@
 </section>
 
 <div class="trust">
-  <div class="trust-inner">
-    <div class="trust-item">
+  <div class="trust-inner" data-reveal-group>
+    <div class="trust-item reveal-item">
       <span class="num">01</span>
       <h4>Diseño funcional</h4>
       <p>Soluciones pensadas para el uso real de cada espacio exterior.</p>
     </div>
-    <div class="trust-item">
+    <div class="trust-item reveal-item">
       <span class="num">02</span>
       <h4>Materiales de calidad</h4>
       <p>Productos de hormigón vibrado seleccionados por durabilidad.</p>
     </div>
-    <div class="trust-item">
+    <div class="trust-item reveal-item">
       <span class="num">03</span>
       <h4>Ejecución profesional</h4>
       <p>Instalación prolija, con nivelación y terminaciones cuidadas.</p>
     </div>
-    <div class="trust-item">
+    <div class="trust-item reveal-item">
       <span class="num">04</span>
       <h4>Garantía de instalación</h4>
       <p>Respaldo de 6 meses por fallas de ejecución.</p>
@@ -487,20 +537,21 @@
 
 <section id="especialidades">
   <div class="wrap">
-    <div class="section-head center">
+    <div class="section-head center reveal">
       <span class="eyebrow">Áreas de especialidad</span>
       <h2>Lo que hacemos</h2>
-      <p>Tres frentes de trabajo, un mismo estándar: precisión en la instalación y terminaciones de alto nivel para exteriores residenciales.</p>
+      <p>Somos expertos instaladores en distintos frentes de trabajo, un mismo estándar: precisión en la ejecución y terminaciones de alto nivel para exteriores residenciales.</p>
     </div>
   </div>
   <div class="wrap">
-    <div class="specialties">
-      <article class="spec-card">
+    <div class="specialties" data-reveal-group>
+      <article class="spec-card reveal-item">
         <div class="spec-img">
           <span class="spec-tag">Piscinas</span>
           <img src="images/piscina.jpg" alt="Instalación de bordes de piscina Terra Concept">
         </div>
         <div class="spec-body">
+          <span class="spec-kicker">Una instalación profesional</span>
           <h3>Bordes de piscina</h3>
           <p>Instalación de bordes Bull sobre radier perimetral, con adhesivo estructural, cortes de precisión y nivelación pieza a pieza. Un remate elegante y funcional que enmarca tu piscina.</p>
           <ul class="spec-list">
@@ -511,12 +562,13 @@
           </ul>
         </div>
       </article>
-      <article class="spec-card">
+      <article class="spec-card reveal-item">
         <div class="spec-img">
           <span class="spec-tag">Terrazas</span>
           <img src="images/terraza.jpg" alt="Instalación de pastelones de terraza Terra Concept">
         </div>
         <div class="spec-body">
+          <span class="spec-kicker">Una instalación profesional</span>
           <h3>Terrazas y pastelones</h3>
           <p>Instalación de pastelones de distintas medidas con mortero de pega, nivelación individual de cada pieza y fraguado de juntas para terrazas sólidas, parejas y de gran presencia.</p>
           <ul class="spec-list">
@@ -527,12 +579,13 @@
           </ul>
         </div>
       </article>
-      <article class="spec-card">
+      <article class="spec-card reveal-item">
         <div class="spec-img">
           <span class="spec-tag">Fachaletas</span>
           <img src="images/fachaletas_textura.jpg" alt="Revestimiento en fachaletas de hormigón vibrado">
         </div>
         <div class="spec-body">
+          <span class="spec-kicker">Una instalación profesional</span>
           <h3>Revestimientos en fachaletas</h3>
           <p>Instalación de fachaletas de hormigón vibrado para muros y fachadas exteriores. Una terminación texturizada en tonos naturales que aporta carácter, calidez y relieve a cada muro.</p>
           <ul class="spec-list">
@@ -543,33 +596,50 @@
           </ul>
         </div>
       </article>
+      <article class="spec-card reveal-item">
+        <div class="spec-img">
+          <span class="spec-tag">Adoquines</span>
+          <img src="images/adoquines.jpg" alt="Instalación de adoquines de hormigón Terra Concept">
+        </div>
+        <div class="spec-body">
+          <span class="spec-kicker">Una instalación profesional</span>
+          <h3>Adoquines vehiculares y peatonales</h3>
+          <p>Instalación de adoquines de hormigón sobre base granular compactada y cama de arena, con colocación en espiga u otros patrones y sellado de juntas. Accesos, estacionamientos y caminos con resistencia al tránsito diario.</p>
+          <ul class="spec-list">
+            <li>Preparación de base y compactación</li>
+            <li>Cama de arena nivelada</li>
+            <li>Colocación en espiga, parrilla u otro patrón</li>
+            <li>Sellado de juntas y compactación final</li>
+          </ul>
+        </div>
+      </article>
     </div>
   </div>
 </section>
 
 <section class="proceso">
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal">
       <span class="eyebrow">Cómo trabajamos</span>
       <h2>Un proceso claro, de principio a fin</h2>
     </div>
-    <div class="steps">
-      <div class="step">
+    <div class="steps" data-reveal-group>
+      <div class="step reveal-item">
         <span class="step-num">01</span>
         <h4>Visita a terreno</h4>
         <p>Confirmamos medidas y alcances técnicos del proyecto en base a tu cotización estimativa.</p>
       </div>
-      <div class="step">
+      <div class="step reveal-item">
         <span class="step-num">02</span>
         <h4>Preparación de base</h4>
         <p>Excavación, radier y preparación de la superficie según el sistema de instalación.</p>
       </div>
-      <div class="step">
+      <div class="step reveal-item">
         <span class="step-num">03</span>
         <h4>Instalación</h4>
         <p>Colocación, nivelación pieza a pieza, cortes y fraguado de juntas con terminación prolija.</p>
       </div>
-      <div class="step">
+      <div class="step reveal-item">
         <span class="step-num">04</span>
         <h4>Entrega final</h4>
         <p>Limpieza completa de la obra y entrega del proyecto terminado, con garantía de instalación.</p>
@@ -580,11 +650,11 @@
 
 <section id="nosotros">
   <div class="wrap nosotros">
-    <div class="nosotros-img">
+    <div class="nosotros-img reveal">
       <div class="frame"></div>
       <img src="images/nosotros.jpg" alt="Proyecto de exteriores Terra Concept">
     </div>
-    <div class="nosotros-text">
+    <div class="nosotros-text reveal">
       <span class="eyebrow">Nosotros</span>
       <h2>Especialistas en exteriores de hormigón</h2>
       <p>No solo instalamos productos de hormigón. Nos encargamos de que cada proyecto quede correctamente nivelado, alineado y terminado para que dure por años.</p>
@@ -618,7 +688,7 @@
 
 <section class="contact" id="contacto">
   <div class="wrap contact-inner">
-    <div>
+    <div class="reveal">
       <span class="eyebrow">Contacto</span>
       <h2>Conversemos sobre tu proyecto</h2>
       <p class="lead">Cuéntanos qué necesitas instalar —piscina, terraza o revestimiento— y coordinamos una visita a terreno para preparar tu propuesta económica.</p>
@@ -652,7 +722,7 @@
         </a>
       </div>
     </div>
-    <div class="contact-card">
+    <div class="contact-card reveal">
       <h3>Antes de tu visita a terreno</h3>
       <p>Estas son las condiciones generales con las que trabajamos en cada propuesta:</p>
       <ul>
@@ -669,7 +739,7 @@
 <footer>
   <div class="wrap">
     <div class="footer-top">
-      <div class="footer-logo">TERRA CONCEPT<span>SOLUCIONES PARA EXTERIORES</span></div>
+      <div class="footer-logo"><img src="images/logo_footer_final.png" alt="Terra Concept — Soluciones para exteriores"></div>
       <nav class="footer-nav">
         <a href="#inicio">Inicio</a>
         <a href="#especialidades">Especialidades</a>
@@ -699,6 +769,106 @@
   menuToggle.addEventListener('click', () => mobileNav.classList.add('open'));
   mobileClose.addEventListener('click', () => mobileNav.classList.remove('open'));
   mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileNav.classList.remove('open')));
+</script>
+
+<!-- Red de seguridad: si por cualquier motivo las animaciones no cargan (CDN caído,
+     red lenta, bloqueador de scripts), el contenido se muestra igual pasado un momento. -->
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelectorAll('.reveal, .reveal-item, .hero-content > *').forEach(el => {
+        if (getComputedStyle(el).opacity === '0'){
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        }
+      });
+    }, 2200);
+  });
+</script>
+
+<!-- Motion (vanilla Framer Motion) — entradas y scroll reveal -->
+<script type="module">
+  (async () => {
+    let animate, inView, stagger;
+    try {
+      ({ animate, inView, stagger } = await import("https://cdn.jsdelivr.net/npm/motion@latest/+esm"));
+    } catch (e){
+      // Si Motion no carga, la red de seguridad de arriba se encarga de mostrar el contenido.
+      return;
+    }
+
+    const easeOut = [0.16, 1, 0.3, 1];
+
+    // Entrada del hero al cargar la página
+    const heroEls = document.querySelectorAll('.hero-content > *');
+    if (heroEls.length){
+      animate(heroEls, { opacity: [0, 1], y: [24, 0] }, {
+        duration: 0.8,
+        delay: stagger(0.12, { startDelay: 0.15 }),
+        easing: easeOut
+      });
+    }
+
+    // Reveal individual al hacer scroll
+    document.querySelectorAll('.reveal').forEach(el => {
+      inView(el, () => {
+        animate(el, { opacity: [0, 1], y: [28, 0] }, { duration: 0.7, easing: easeOut });
+      }, { amount: 0.25 });
+    });
+
+    // Reveal en grupo (con stagger) al hacer scroll
+    document.querySelectorAll('[data-reveal-group]').forEach(group => {
+      const items = group.querySelectorAll(':scope > .reveal-item');
+      if (!items.length) return;
+      inView(group, () => {
+        animate(items, { opacity: [0, 1], y: [28, 0] }, {
+          duration: 0.6,
+          delay: stagger(0.12),
+          easing: easeOut
+        });
+      }, { amount: 0.2 });
+    });
+  })();
+</script>
+
+<!-- Acento 3D del hero: foto real del producto con inclinación (tilt) 3D por mouse + flotación -->
+<script>
+  (function initHero3D(){
+    const container = document.getElementById('hero3d');
+    if (!container) return;
+    const img = container.querySelector('.hero-3d-img');
+    if (!img) return;
+
+    // Balanceo automático permanente (se ve en cualquier pantalla, con o sin mouse).
+    // El mouse (si existe) suma un desvío extra encima del balanceo.
+    let mouseRX = 0, mouseRY = 0, rx = 10, ry = -16, t = 0;
+
+    window.addEventListener('mousemove', (e) => {
+      const nx = (e.clientX / window.innerWidth) - 0.5;
+      const ny = (e.clientY / window.innerHeight) - 0.5;
+      mouseRY = nx * 24;
+      mouseRX = -ny * 14;
+    });
+
+    function loop(){
+      requestAnimationFrame(loop);
+      t += 0.008;
+      const swayRY = Math.sin(t) * 10;
+      const swayRX = Math.cos(t * 0.7) * 4;
+      const targetRX = 10 + swayRX + mouseRX;
+      const targetRY = -16 + swayRY + mouseRY;
+      rx += (targetRX - rx) * 0.05;
+      ry += (targetRY - ry) * 0.05;
+      const floatY = Math.sin(t * 1.4) * 9;
+      img.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateY(${floatY}px)`;
+    }
+    requestAnimationFrame(loop);
+
+    requestAnimationFrame(() => {
+      container.style.transition = 'opacity 1.3s ease';
+      container.style.opacity = '1';
+    });
+  })();
 </script>
 
 </body>
