@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terra Concept — Soluciones para Exteriores</title>
+<meta name="description" content="Terra Concept: especialistas en instalación de bordes de piscina, terrazas y revestimientos de fachaletas en hormigón vibrado. Diseño funcional, materiales de calidad y garantía de instalación.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green: #1c2b1f;
+    --green-soft: #2a3c26;
+    --cream: #f7f5f0;
+    --cream-2: #efece3;
+    --ink: #23261f;
+    --ink-soft: #55584e;
+    --stone: #a89f92;
+    --line: #ddd7c8;
+    --white: #fffef c;
+    --radius: 2px;
+    --maxw: 1180px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter', sans-serif;
+    color:var(--ink);
+    background:var(--cream);
+    font-weight:300;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%; display:block;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 32px;}
+  h1,h2,h3,h4{
+    font-family:'Jost', sans-serif;
+    font-weight:600;
+    color:var(--green);
+    letter-spacing:0.02em;
+  }
+  .eyebrow{
+    font-family:'Jost', sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.28em;
+    font-size:12px;
+    font-weight:500;
+    color:var(--stone);
+  }
+  .rule{
+    width:56px; height:2px; background:var(--green);
+    margin:18px 0;
+  }
+  .rule.center{margin-left:auto; margin-right:auto;}
+  .rule.light{background:var(--cream);}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(247,245,240,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid transparent;
+    transition:border-color .3s, background .3s;
+  }
+  header.scrolled{
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:20px 32px;
+    max-width:var(--maxw); margin:0 auto;
+  }
+  .logo{
+    font-family:'Jost', sans-serif;
+    font-weight:700;
+    font-size:22px;
+    letter-spacing:0.18em;
+    color:var(--green);
+    line-height:1.1;
+  }
+  .logo span{
+    display:block;
+    font-size:9px;
+    font-weight:400;
+    letter-spacing:0.32em;
+    color:var(--stone);
+    margin-top:3px;
+  }
+  .nav-links{
+    display:flex; align-items:center; gap:40px;
+    font-family:'Jost', sans-serif;
+    font-size:13px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+  }
+  .nav-links a{
+    position:relative; padding:4px 0; color:var(--ink);
+    transition:color .25s;
+  }
+  .nav-links a:hover{color:var(--green);}
+  .nav-links a::after{
+    content:""; position:absolute; left:0; bottom:0; width:0; height:1px;
+    background:var(--green); transition:width .25s;
+  }
+  .nav-links a:hover::after{width:100%;}
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:'Jost', sans-serif;
+    font-size:12.5px; letter-spacing:0.14em; text-transform:uppercase;
+    padding:13px 26px;
+    border:1px solid var(--green);
+    color:var(--green);
+    background:transparent;
+    transition:all .25s;
+    white-space:nowrap;
+  }
+  .btn:hover{background:var(--green); color:var(--cream);}
+  .btn.solid{background:var(--green); color:var(--cream);}
+  .btn.solid:hover{background:var(--green-soft); border-color:var(--green-soft);}
+  .btn.on-dark{border-color:rgba(247,245,240,0.6); color:var(--cream);}
+  .btn.on-dark:hover{background:var(--cream); color:var(--green); border-color:var(--cream);}
+
+  .menu-toggle{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:6px;}
+  .menu-toggle span{width:24px; height:1.5px; background:var(--green);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    box-sizing:content-box;
+    padding-top:104px;
+    height:92vh; min-height:560px;
+    display:flex; align-items:flex-end;
+    overflow:hidden;
+    background:var(--green);
+  }
+  .hero-bg{
+    position:absolute; inset:0;
+    background-image:url('images/piscina.jpg');
+    background-size:cover;
+    background-position:center 30%;
+    filter:saturate(0.95);
+  }
+  .hero-overlay{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(20,30,20,0.55) 0%, rgba(20,30,20,0.25) 38%, rgba(18,26,17,0.85) 100%);
+  }
+  .hero-content{
+    position:relative; z-index:2;
+    max-width:var(--maxw); margin:0 auto;
+    padding:0 32px 80px;
+    width:100%;
+    color:var(--cream);
+  }
+  .hero-content .eyebrow{color:#cfc9b4;}
+  .hero-content h1{
+    color:var(--cream);
+    font-size:clamp(34px, 5.4vw, 62px);
+    font-weight:600;
+    line-height:1.08;
+    max-width:820px;
+    margin-top:16px;
+  }
+  .hero-content p{
+    max-width:520px;
+    margin-top:20px;
+    color:#e7e3d6;
+    font-weight:300;
+    font-size:16px;
+  }
+  .hero-actions{
+    display:flex; gap:16px; margin-top:38px; flex-wrap:wrap;
+  }
+
+  /* ---------- TRUST STRIP ---------- */
+  .trust{
+    background:var(--green);
+    color:var(--cream);
+  }
+  .trust-inner{
+    max-width:var(--maxw); margin:0 auto; padding:0 32px;
+    display:grid; grid-template-columns:repeat(4,1fr);
+  }
+  .trust-item{
+    padding:30px 24px;
+    border-left:1px solid rgba(247,245,240,0.15);
+    text-align:left;
+  }
+  .trust-item:first-child{border-left:none;}
+  .trust-item .num{
+    font-family:'Jost', sans-serif; font-size:11px; letter-spacing:0.2em;
+    color:#a9b39f; margin-bottom:8px; display:block;
+  }
+  .trust-item h4{color:var(--cream); font-size:15px; letter-spacing:0.01em; margin-bottom:6px; font-weight:600;}
+  .trust-item p{font-size:13px; color:#cfc9b4; font-weight:300; line-height:1.5;}
+
+  /* ---------- SECTION GENERIC ---------- */
+  section{padding:110px 0;}
+  .section-head{
+    max-width:640px; margin-bottom:64px;
+  }
+  .section-head.center{margin-left:auto; margin-right:auto; text-align:center;}
+  .section-head h2{
+    font-size:clamp(28px,3.4vw,40px);
+    margin-top:14px;
+  }
+  .section-head p{
+    margin-top:18px; color:var(--ink-soft); font-size:15.5px; max-width:560px;
+  }
+  .section-head.center p{margin-left:auto; margin-right:auto;}
+  .proceso .section-head{max-width:900px;}
+  .proceso .section-head h2{white-space:nowrap;}
+  @media (max-width: 760px){
+    .proceso .section-head h2{white-space:normal;}
+  }
+
+  /* ---------- ESPECIALIDADES ---------- */
+  .specialties{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:2px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .spec-card{
+    background:var(--cream);
+    display:flex; flex-direction:column;
+  }
+  .spec-img{
+    position:relative;
+    height:300px; overflow:hidden;
+  }
+  .spec-img img{
+    width:100%; height:100%; object-fit:cover;
+    transition:transform .7s ease;
+  }
+  .spec-card:hover .spec-img img{transform:scale(1.06);}
+  .spec-tag{
+    position:absolute; top:18px; left:18px;
+    background:rgba(247,245,240,0.92);
+    color:var(--green);
+    font-family:'Jost',sans-serif;
+    font-size:11px; letter-spacing:0.18em; text-transform:uppercase;
+    padding:7px 14px;
+  }
+  .spec-body{padding:34px 30px 38px; flex:1; display:flex; flex-direction:column;}
+  .spec-body h3{font-size:21px; margin-bottom:14px;}
+  .spec-body p{color:var(--ink-soft); font-size:14.5px; flex:1;}
+  .spec-list{
+    list-style:none; margin-top:22px; padding-top:22px;
+    border-top:1px solid var(--line);
+  }
+  .spec-list li{
+    font-size:12.5px; color:var(--ink-soft);
+    padding:4px 0 4px 18px; position:relative;
+    font-family:'Jost',sans-serif; letter-spacing:0.02em;
+  }
+  .spec-list li::before{
+    content:""; position:absolute; left:0; top:11px; width:6px; height:1px; background:var(--stone);
+  }
+
+  /* ---------- PROCESO ---------- */
+  .proceso{background:var(--cream-2);}
+  .steps{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:40px;
+  }
+  .step{position:relative; padding-top:6px;}
+  .step .step-num{
+    font-family:'Jost',sans-serif; font-size:46px; font-weight:600;
+    color:transparent;
+    -webkit-text-stroke:1px var(--stone);
+    display:block; margin-bottom:18px;
+  }
+  .step h4{font-size:16.5px; margin-bottom:10px;}
+  .step p{font-size:13.5px; color:var(--ink-soft);}
+
+  /* ---------- NOSOTROS ---------- */
+  .nosotros{
+    display:grid; grid-template-columns:0.9fr 1.1fr; gap:70px; align-items:center;
+  }
+  .nosotros-img{
+    position:relative;
+  }
+  .nosotros-img img{
+    width:100%; height:460px; object-fit:cover;
+  }
+  .nosotros-img .frame{
+    position:absolute; top:20px; left:20px; right:-20px; bottom:-20px;
+    border:1px solid var(--green);
+    z-index:-1;
+  }
+  .nosotros-text p{color:var(--ink-soft); margin-top:18px; font-size:15.5px;}
+  .nosotros-callout{
+    display:block;
+    margin-top:30px; padding:18px 22px;
+    background:var(--cream-2);
+    border-left:2px solid var(--green);
+  }
+  .nosotros-callout strong{
+    display:block; font-family:'Jost',sans-serif; font-size:13px;
+    letter-spacing:0.04em; text-transform:uppercase; color:var(--green); font-weight:600;
+  }
+  .nosotros-callout span{display:block; margin-top:6px; font-size:14px; color:var(--ink-soft);}
+  .nosotros-badges{
+    display:grid; grid-template-columns:repeat(4,auto); gap:28px;
+    margin-top:40px; padding-top:26px; border-top:1px solid var(--line);
+  }
+  .nosotros-badges div{
+    font-family:'Jost',sans-serif;
+    padding-left:28px; border-left:1px solid var(--line);
+  }
+  .nosotros-badges div:first-child{padding-left:0; border-left:none;}
+  .nosotros-badges strong{display:block; font-size:30px; color:var(--green); font-weight:600; white-space:nowrap;}
+  .nosotros-badges strong em{font-style:normal; font-size:13px; font-weight:500; color:var(--stone); margin-left:3px;}
+  .nosotros-badges span{font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft); display:block; margin-top:4px;}
+
+  /* ---------- CONTACT ---------- */
+  .contact{
+    background:var(--green);
+    color:var(--cream);
+  }
+  .contact-inner{
+    display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;
+  }
+  .contact .eyebrow{color:#a9b39f;}
+  .contact h2{color:var(--cream); margin-top:14px;}
+  .contact p.lead{color:#d8d3c2; margin-top:18px; max-width:440px; font-size:15.5px;}
+  .contact-methods{margin-top:36px; display:flex; flex-direction:column; gap:22px;}
+  .contact-method{display:flex; align-items:center; gap:16px;}
+  .contact-method .ic{
+    width:42px; height:42px; border:1px solid rgba(247,245,240,0.35);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .contact-method .label{font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:#a9b39f; font-family:'Jost',sans-serif;}
+  .contact-method .value{font-size:16px; margin-top:2px;}
+  .contact-card{
+    background:rgba(247,245,240,0.06);
+    border:1px solid rgba(247,245,240,0.18);
+    padding:48px 40px;
+  }
+  .contact-card h3{color:var(--cream); font-size:20px; margin-bottom:14px;}
+  .contact-card p{color:#d8d3c2; font-size:14.5px; margin-bottom:28px;}
+  .contact-card ul{list-style:none;}
+  .contact-card li{
+    font-size:13.5px; color:#cfc9b4; padding:9px 0; border-top:1px solid rgba(247,245,240,0.12);
+    display:flex; justify-content:space-between;
+  }
+  .contact-card li:first-child{border-top:none;}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    background:#141f14; color:#9aa392; padding:60px 0 30px;
+  }
+  .footer-top{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    flex-wrap:wrap; gap:40px;
+    padding-bottom:40px; border-bottom:1px solid rgba(247,245,240,0.1);
+  }
+  .footer-logo{
+    font-family:'Jost', sans-serif; font-weight:700; font-size:20px; letter-spacing:0.18em; color:var(--cream);
+  }
+  .footer-logo span{display:block; font-size:9px; font-weight:400; letter-spacing:0.3em; color:#7f8a72; margin-top:6px;}
+  .footer-nav{display:flex; gap:36px; font-family:'Jost',sans-serif; font-size:12.5px; letter-spacing:0.1em; text-transform:uppercase;}
+  .footer-nav a:hover{color:var(--cream);}
+  .footer-bottom{
+    display:flex; justify-content:space-between; padding-top:26px; font-size:12.5px; flex-wrap:wrap; gap:12px;
+  }
+
+  /* ---------- WHATSAPP FLOAT ---------- */
+  .wa-float{
+    position:fixed; bottom:26px; right:26px; z-index:200;
+    width:56px; height:56px; border-radius:50%;
+    background:var(--green); display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 24px rgba(0,0,0,0.25);
+    transition:transform .25s;
+  }
+  .wa-float:hover{transform:scale(1.08);}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 900px){
+    .nav-links{display:none;}
+    .header-cta{display:none;}
+    .menu-toggle{display:flex;}
+    .trust-inner{grid-template-columns:repeat(2,1fr);}
+    .trust-item:nth-child(3){border-left:none;}
+    .specialties{grid-template-columns:1fr;}
+    .steps{grid-template-columns:repeat(2,1fr); row-gap:36px;}
+    .nosotros{grid-template-columns:1fr; gap:40px;}
+    .nosotros-img img{height:340px;}
+    .nosotros-badges{grid-template-columns:repeat(2,auto); row-gap:24px;}
+    .nosotros-badges div:nth-child(3){padding-left:0; border-left:none;}
+    .contact-inner{grid-template-columns:1fr;}
+    section{padding:76px 0;}
+  }
+  @media (max-width: 560px){
+    .wrap, .nav, .hero-content, .trust-inner{padding-left:22px; padding-right:22px;}
+    .logo{font-size:17px;}
+    .logo span{font-size:8px; letter-spacing:0.24em;}
+    .nav{padding:16px 22px;}
+    .steps{grid-template-columns:1fr;}
+    .hero-actions{flex-direction:column; align-items:flex-start;}
+    .footer-top{flex-direction:column;}
+    .footer-nav{flex-wrap:wrap; gap:20px;}
+  }
+
+  /* mobile nav panel */
+  .mobile-nav{
+    position:fixed; inset:0; background:var(--green); z-index:150;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:34px;
+    transform:translateY(-100%); transition:transform .4s ease;
+  }
+  .mobile-nav.open{transform:translateY(0);}
+  .mobile-nav a{
+    font-family:'Jost',sans-serif; color:var(--cream); font-size:22px; letter-spacing:0.08em; text-transform:uppercase;
+  }
+  .mobile-close{
+    position:absolute; top:26px; right:28px; background:none; border:none; color:var(--cream); font-size:28px; cursor:pointer;
+  }
+</style>
+</head>
+<body>
+
+<header id="site-header">
+  <div class="nav">
+    <a href="#inicio" class="logo">TERRA CONCEPT<span>SOLUCIONES PARA EXTERIORES</span></a>
+    <nav class="nav-links">
+      <a href="#inicio">Inicio</a>
+      <a href="#especialidades">Especialidades</a>
+      <a href="#nosotros">Nosotros</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <div style="display:flex; align-items:center; gap:18px;">
+      <a href="https://wa.me/56936164525?text=Hola%2C%20quiero%20cotizar%20un%20proyecto%20con%20Terra%20Concept" target="_blank" rel="noopener" class="btn header-cta">Cotiza tu proyecto</a>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-nav" id="mobile-nav">
+  <button class="mobile-close" id="mobile-close" aria-label="Cerrar menú">&times;</button>
+  <a href="#inicio">Inicio</a>
+  <a href="#especialidades">Especialidades</a>
+  <a href="#nosotros">Nosotros</a>
+  <a href="#contacto">Contacto</a>
+  <a href="https://wa.me/56936164525?text=Hola%2C%20quiero%20cotizar%20un%20proyecto%20con%20Terra%20Concept" target="_blank" rel="noopener" class="btn on-dark" style="margin-top:6px;">Cotiza tu proyecto</a>
+</div>
+
+<section class="hero" id="inicio">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="eyebrow">Bordes de piscina · Terrazas · Fachaletas</span>
+    <h1>El acabado perfecto comienza con una instalación profesional</h1>
+    <p>Instalación profesional de bordes de piscina, terrazas y revestimientos de fachaletas en hormigón vibrado. Materiales de calidad, ejecución prolija y garantía en cada proyecto.</p>
+    <div class="hero-actions">
+      <a href="https://wa.me/56936164525?text=Hola%2C%20quiero%20cotizar%20un%20proyecto%20con%20Terra%20Concept" target="_blank" rel="noopener" class="btn solid">Solicitar cotización</a>
+      <a href="#especialidades" class="btn on-dark">Ver especialidades</a>
+    </div>
+  </div>
+</section>
+
+<div class="trust">
+  <div class="trust-inner">
+    <div class="trust-item">
+      <span class="num">01</span>
+      <h4>Diseño funcional</h4>
+      <p>Soluciones pensadas para el uso real de cada espacio exterior.</p>
+    </div>
+    <div class="trust-item">
+      <span class="num">02</span>
+      <h4>Materiales de calidad</h4>
+      <p>Productos de hormigón vibrado seleccionados por durabilidad.</p>
+    </div>
+    <div class="trust-item">
+      <span class="num">03</span>
+      <h4>Ejecución profesional</h4>
+      <p>Instalación prolija, con nivelación y terminaciones cuidadas.</p>
+    </div>
+    <div class="trust-item">
+      <span class="num">04</span>
+      <h4>Garantía de instalación</h4>
+      <p>Respaldo de 6 meses por fallas de ejecución.</p>
+    </div>
+  </div>
+</div>
+
+<section id="especialidades">
+  <div class="wrap">
+    <div class="section-head center">
+      <span class="eyebrow">Áreas de especialidad</span>
+      <h2>Lo que hacemos</h2>
+      <p>Tres frentes de trabajo, un mismo estándar: precisión en la instalación y terminaciones de alto nivel para exteriores residenciales.</p>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="specialties">
+      <article class="spec-card">
+        <div class="spec-img">
+          <span class="spec-tag">Piscinas</span>
+          <img src="images/piscina.jpg" alt="Instalación de bordes de piscina Terra Concept">
+        </div>
+        <div class="spec-body">
+          <h3>Bordes de piscina</h3>
+          <p>Instalación de bordes Bull sobre radier perimetral, con adhesivo estructural, cortes de precisión y nivelación pieza a pieza. Un remate elegante y funcional que enmarca tu piscina.</p>
+          <ul class="spec-list">
+            <li>Radier perimetral y armadura</li>
+            <li>Instalación de bordes con adhesivo DA</li>
+            <li>Cortes, encuentros y nivelación</li>
+            <li>Limpieza y retiro de residuos menores</li>
+          </ul>
+        </div>
+      </article>
+      <article class="spec-card">
+        <div class="spec-img">
+          <span class="spec-tag">Terrazas</span>
+          <img src="images/terraza.jpg" alt="Instalación de pastelones de terraza Terra Concept">
+        </div>
+        <div class="spec-body">
+          <h3>Terrazas y pastelones</h3>
+          <p>Instalación de pastelones de distintas medidas con mortero de pega, nivelación individual de cada pieza y fraguado de juntas para terrazas sólidas, parejas y de gran presencia.</p>
+          <ul class="spec-list">
+            <li>Preparación de radier y superficie</li>
+            <li>Instalación con mortero de pega</li>
+            <li>Cortes, ajustes y fraguado de juntas</li>
+            <li>Limpieza final de la obra</li>
+          </ul>
+        </div>
+      </article>
+      <article class="spec-card">
+        <div class="spec-img">
+          <span class="spec-tag">Fachaletas</span>
+          <img src="images/fachaletas_textura.jpg" alt="Revestimiento en fachaletas de hormigón vibrado">
+        </div>
+        <div class="spec-body">
+          <h3>Revestimientos en fachaletas</h3>
+          <p>Instalación de fachaletas de hormigón vibrado para muros y fachadas exteriores. Una terminación texturizada en tonos naturales que aporta carácter, calidez y relieve a cada muro.</p>
+          <ul class="spec-list">
+            <li>Preparación y limpieza del muro</li>
+            <li>Instalación con adhesivo</li>
+            <li>Fraguado de juntas</li>
+            <li>Terminación y limpieza final</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="proceso">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Cómo trabajamos</span>
+      <h2>Un proceso claro, de principio a fin</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">01</span>
+        <h4>Visita a terreno</h4>
+        <p>Confirmamos medidas y alcances técnicos del proyecto en base a tu cotización estimativa.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">02</span>
+        <h4>Preparación de base</h4>
+        <p>Excavación, radier y preparación de la superficie según el sistema de instalación.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">03</span>
+        <h4>Instalación</h4>
+        <p>Colocación, nivelación pieza a pieza, cortes y fraguado de juntas con terminación prolija.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">04</span>
+        <h4>Entrega final</h4>
+        <p>Limpieza completa de la obra y entrega del proyecto terminado, con garantía de instalación.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="nosotros">
+  <div class="wrap nosotros">
+    <div class="nosotros-img">
+      <div class="frame"></div>
+      <img src="images/nosotros.jpg" alt="Proyecto de exteriores Terra Concept">
+    </div>
+    <div class="nosotros-text">
+      <span class="eyebrow">Nosotros</span>
+      <h2>Especialistas en exteriores de hormigón</h2>
+      <p>No solo instalamos productos de hormigón. Nos encargamos de que cada proyecto quede correctamente nivelado, alineado y terminado para que dure por años.</p>
+      <p>Cada instalación comienza con una visita técnica donde verificamos medidas, pendientes y condiciones del terreno. De esa forma el presupuesto final es preciso y la ejecución se realiza sin improvisaciones.</p>
+      <p>Trabajamos con materiales certificados, mano de obra especializada y procesos definidos para entregar un resultado limpio, durable y con terminaciones profesionales.</p>
+      <div class="nosotros-callout">
+        <strong>Presupuesto cerrado después de la visita técnica</strong>
+        <span>Sin cobros sorpresa durante la ejecución.</span>
+      </div>
+      <div class="nosotros-badges">
+        <div>
+          <strong>250+</strong>
+          <span>Proyectos ejecutados</span>
+        </div>
+        <div>
+          <strong>6<em>meses</em></strong>
+          <span>Garantía de instalación</span>
+        </div>
+        <div>
+          <strong>4–5<em>días</em></strong>
+          <span>Plazo promedio de ejecución</span>
+        </div>
+        <div>
+          <strong>100%</strong>
+          <span>Visita técnica previa</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contacto">
+  <div class="wrap contact-inner">
+    <div>
+      <span class="eyebrow">Contacto</span>
+      <h2>Conversemos sobre tu proyecto</h2>
+      <p class="lead">Cuéntanos qué necesitas instalar —piscina, terraza o revestimiento— y coordinamos una visita a terreno para preparar tu propuesta económica.</p>
+      <div class="contact-methods">
+        <a class="contact-method" href="tel:+56936164525">
+          <div class="ic">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <div>
+            <div class="label">Teléfono</div>
+            <div class="value">+56 9 3616 4525</div>
+          </div>
+        </a>
+        <a class="contact-method" href="mailto:contacto@terraconcept.cl">
+          <div class="ic">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg>
+          </div>
+          <div>
+            <div class="label">Email</div>
+            <div class="value">contacto@terraconcept.cl</div>
+          </div>
+        </a>
+        <a class="contact-method" href="https://wa.me/56936164525?text=Hola%2C%20quiero%20cotizar%20un%20proyecto%20con%20Terra%20Concept" target="_blank" rel="noopener">
+          <div class="ic">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </div>
+          <div>
+            <div class="label">WhatsApp</div>
+            <div class="value">Escríbenos directo</div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="contact-card">
+      <h3>Antes de tu visita a terreno</h3>
+      <p>Estas son las condiciones generales con las que trabajamos en cada propuesta:</p>
+      <ul>
+        <li><span>Plazo de ejecución</span><span>4 a 5 días hábiles</span></li>
+        <li><span>Garantía</span><span>6 meses por fallas de ejecución</span></li>
+        <li><span>Visita a terreno</span><span>Se abona al total del proyecto</span></li>
+        <li><span>Validez de la propuesta</span><span>7 días hábiles</span></li>
+        <li><span>Forma de pago</span><span>A convenir</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-logo">TERRA CONCEPT<span>SOLUCIONES PARA EXTERIORES</span></div>
+      <nav class="footer-nav">
+        <a href="#inicio">Inicio</a>
+        <a href="#especialidades">Especialidades</a>
+        <a href="#nosotros">Nosotros</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Terra Concept. Todos los derechos reservados.</span>
+      <span>+56 9 3616 4525 · contacto@terraconcept.cl</span>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/56936164525?text=Hola%2C%20quiero%20cotizar%20un%20proyecto%20con%20Terra%20Concept" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#f7f5f0" stroke-width="1.7"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+</a>
+
+<script>
+  const header = document.getElementById('site-header');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 20);
+  });
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileNav = document.getElementById('mobile-nav');
+  const mobileClose = document.getElementById('mobile-close');
+  menuToggle.addEventListener('click', () => mobileNav.classList.add('open'));
+  mobileClose.addEventListener('click', () => mobileNav.classList.remove('open'));
+  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileNav.classList.remove('open')));
+</script>
+
+</body>
+</html>
