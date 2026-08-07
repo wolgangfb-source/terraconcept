@@ -729,6 +729,89 @@ $('btn-pdf').addEventListener('click', () => {
   window.print();
 });
 
+// ---------------------------------------------------------------------------
+// Compartir el PDF (WhatsApp, correo, lo que ofrezca el sistema)
+//
+// `window.print()` no entrega un archivo: abre el diálogo del navegador. Para
+// poder compartir hace falta un PDF de verdad, así que aquí se genera uno en el
+// dispositivo y se entrega al menú nativo de compartir.
+//
+// El costo es que este PDF va rasterizado (texto no seleccionable, más pesado)
+// frente al de impresión, que es vectorial. Por eso conviven los dos botones:
+// "PDF" para el camino bueno en escritorio, "Compartir" para el teléfono.
+// ---------------------------------------------------------------------------
+const puedeCompartirArchivos = typeof navigator.canShare === 'function';
+$('acciones-compartir').hidden = !puedeCompartirArchivos;
+
+function nombreArchivo() {
+  const quien = (cot.cliente.nombre || 'sin-cliente').trim().replace(/\s+/g, '-');
+  return `Cotizacion-${folio(cot.numero)}-${quien}.pdf`;
+}
+
+// Se arma hoja por hoja en vez de dejar que la librería pagine sola: cada
+// `.pagina` ya mide exactamente una A4, así que el corte queda donde debe.
+//
+// Se usan jsPDF y html2canvas por separado y no html2pdf.js, cuyo build ESM
+// está roto en el CDN ("Cannot set properties of undefined (setting
+// 'getPageSize')"). Se importan sólo al pedir compartir, para no cargarlos en
+// cada visita.
+async function generarPDF() {
+  const [{ jsPDF }, html2canvas] = await Promise.all([
+    import('https://cdn.jsdelivr.net/npm/jspdf@2.5.2/+esm'),
+    import('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm').then((m) => m.default),
+  ]);
+
+  const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+  const paginas = $('doc').querySelectorAll('.pagina');
+
+  for (let i = 0; i < paginas.length; i++) {
+    const canvas = await html2canvas(paginas[i], {
+      scale: 2, useCORS: true, backgroundColor: '#faf9f6', logging: false,
+    });
+    if (i > 0) pdf.addPage();
+    pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', 0, 0, 210, 297);
+  }
+  return pdf.output('blob');
+}
+
+$('btn-compartir').addEventListener('click', async () => {
+  if (!cot.linea) return mostrarAviso('Falta elegir la partida antes de compartir.', 'error');
+
+  cargando(true);
+  try {
+    const blob = await generarPDF();
+    const archivo = new File([blob], nombreArchivo(), { type: 'application/pdf' });
+
+    if (navigator.canShare({ files: [archivo] })) {
+      await navigator.share({
+        files: [archivo],
+        title: `Cotización ${folio(cot.numero)}`,
+        text: `Cotización ${folio(cot.numero)} — Terra Concept`,
+      });
+      mostrarAviso('');
+    } else {
+      // El dispositivo no comparte archivos: al menos se lo descarga.
+      descargarBlob(blob, nombreArchivo());
+      mostrarAviso('Este dispositivo no permite compartir archivos. El PDF se descargó.', '');
+    }
+  } catch (e) {
+    // Cancelar el menú de compartir lanza AbortError: no es un fallo.
+    if (e && e.name === 'AbortError') return;
+    mostrarAviso('No se pudo generar el PDF para compartir: ' + (e.message || e), 'error');
+  } finally {
+    cargando(false);
+  }
+});
+
+function descargarBlob(blob, nombre) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = nombre;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 $('btn-nueva').addEventListener('click', () => {
   if (cot.id && !confirm('¿Empezar una cotización nueva? Los cambios sin guardar se pierden.')) return;
   reiniciar();
@@ -927,3 +1010,13 @@ function volcarAlFormulario() {
 // ---------------------------------------------------------------------------
 verVista('editor');
 entrar();
+
+// PWA: instalable y utilizable sin conexión. El service worker sirve el código
+// por red primero, así que un deploy nuevo llega de inmediato.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {
+      // Sin service worker la app funciona igual; sólo pierde el modo offline.
+    });
+  });
+}

@@ -301,13 +301,68 @@ button, input, select, textarea{ font-family:inherit; font-size:inherit; color:i
 .cargando.visible{ display:flex; }
 
 /* ==========================================================================
+   Móvil y tablet angosta
+   ==========================================================================
+   La hoja mide 210 mm: en un teléfono no cabe y escalada al 40 % no se lee.
+   Se saca de pantalla, pero NO con display:none — el documento tiene que
+   seguir teniendo layout real para poder imprimirlo y para generar el PDF que
+   se comparte. Por eso se manda fuera del viewport.
+   ========================================================================== */
+@media screen and (max-width: 900px){
+  .espacio{ grid-template-columns:1fr; }
+
+  .lienzo{
+    position:fixed;
+    left:-300vw; top:0;
+    width:210mm; height:auto;
+    padding:0; background:none;
+    overflow:visible;
+    pointer-events:none;
+  }
+  .lienzo-interno{ transform:none !important; height:auto !important; }
+
+  .panel{ border-right:0; padding:16px; }
+
+  .topbar{ flex-wrap:wrap; gap:8px 12px; padding:10px 16px; }
+  .topbar-marca{ font-size:13px; letter-spacing:.2em; }
+  .topbar-sec{ display:none; }
+  .topbar-usuario{
+    width:100%; margin-left:0; order:3;
+    font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+
+  .listado{ padding:16px 12px 48px; }
+  /* La grilla no cabe: se desplaza en horizontal dentro de su caja. */
+  .listado .tabla{ min-width:720px; }
+  .listado-barra{ flex-wrap:wrap; }
+  .listado-barra input[type="search"]{ flex:1 1 100%; }
+
+  .acciones .btn{ padding:12px 16px; }   /* objetivos táctiles más generosos */
+}
+
+/* Teléfono angosto: el desglose pasa a dos líneas por fila. */
+@media screen and (max-width: 560px){
+  .campo-fila{ grid-template-columns:1fr; }
+
+  .filas-cabecera{ display:none; }
+  .fila{ grid-template-columns:repeat(3, 1fr) 24px; gap:6px; }
+  .fila input:first-child{ grid-column:1 / -1; }
+  .fila input{ padding:9px 8px; }
+}
+
+/* ==========================================================================
    Impresión: sólo el documento
    ========================================================================== */
 @media print{
   .topbar, .panel, .cargando, .listado{ display:none !important; }
   .espacio{ display:block; }
   .espacio[hidden]{ display:block !important; }
-  .lienzo{ overflow:visible; background:none; padding:0; display:block; }
-  .lienzo-interno{ transform:none !important; }
+  /* Anula el desplazamiento fuera de pantalla que aplica el modo móvil. */
+  .lienzo{
+    position:static !important; left:auto !important;
+    overflow:visible; background:none; padding:0; display:block;
+    width:auto; pointer-events:auto;
+  }
+  .lienzo-interno{ transform:none !important; height:auto !important; }
   body{ background:#fff; }
 }
