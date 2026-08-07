@@ -23,8 +23,8 @@
      ====================================================================== -->
 <div class="login" id="login">
   <div class="login-caja">
-    <div class="login-marca">TERRA</div>
-    <div class="login-sub">CONCEPT</div>
+    <img class="login-logo" src="../images/logo_terraconcept.png"
+         alt="Terra Concept — Soluciones para exteriores">
     <div class="login-titulo">COTIZADOR INTERNO</div>
 
     <div class="aviso-ui error" id="login-error"></div>
@@ -69,18 +69,26 @@
       <h2>Tipo de cotización</h2>
       <div class="campo">
         <label for="f-estado">Estado</label>
-        <select id="f-estado">
+        <select id="f-estado" disabled>
           <option value="borrador">Borrador</option>
           <option value="enviada">Enviada</option>
           <option value="aceptada">Aceptada</option>
           <option value="rechazada">Rechazada</option>
           <option value="anulada">Anulada</option>
         </select>
+        <div class="pista" id="pista-estado">Toda cotización nueva parte como borrador. El estado se puede cambiar una vez guardada.</div>
       </div>
       <div class="campo">
-        <label for="f-linea">Partida del tarifario</label>
-        <select id="f-linea">
+        <label for="f-familia">Línea</label>
+        <select id="f-familia">
           <option value="">Seleccionar…</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="f-linea">Partida del tarifario</label>
+        <select id="f-linea" disabled>
+          <option value="">Elegir una línea primero…</option>
         </select>
         <div class="pista" id="pista-linea"></div>
       </div>
@@ -138,15 +146,13 @@
 
       <h2>Desglose de instalación</h2>
       <div class="filas-cabecera">
-        <span>Descripción</span><span>Cant.</span><span>Valor</span><span></span>
+        <span>Descripción</span><span>Cant.</span><span>P. unit.</span><span>Valor</span><span></span>
       </div>
       <div class="filas" id="filas"></div>
       <button class="btn suave chico" id="btn-agregar" style="margin-top:10px">+ Agregar fila</button>
 
       <div class="resumen">
-        <div><span>Neto</span><span id="r-neto">$ 0</span></div>
-        <div><span>IVA <span id="r-iva-pct">19</span>%</span><span id="r-iva">$ 0</span></div>
-        <div class="total"><span>Total</span><span id="r-total">$ 0</span></div>
+        <div class="total"><span>Total neto</span><span id="r-total">$ 0</span></div>
       </div>
 
       <div class="acciones">

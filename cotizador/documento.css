@@ -65,37 +65,13 @@
   padding:9mm var(--doc-pad) 5mm;
 }
 
-.marca{ display:flex; align-items:flex-start; gap:4mm; }
-
-.marca-sello{
-  width:12mm; height:12mm;
-  border:0.5pt solid var(--doc-gold);
-  display:flex; align-items:center; justify-content:center;
-  flex:0 0 auto;
-}
-.marca-sello svg{ width:7mm; height:7mm; }
-
-.marca-texto .marca-nombre{
-  font-family:'Jost', sans-serif;
-  font-size:19pt;
-  letter-spacing:0.30em;
-  line-height:1;
-  color:var(--doc-ink);
-}
-.marca-texto .marca-sub{
-  font-family:'Jost', sans-serif;
-  font-size:8pt;
-  letter-spacing:0.34em;
-  color:var(--doc-ink-2);
-  margin-top:1.6mm;
-  padding-left:0.2em;
-}
-.marca-texto .marca-tagline{
-  font-family:'Jost', sans-serif;
-  font-size:5.6pt;
-  letter-spacing:0.30em;
-  color:var(--doc-ink-2);
-  margin-top:2mm;
+/* Logo oficial de Terra Concept (images/logo_terraconcept.png). */
+/* El PNG viene recortado a su contenido (sin margen transparente): si se
+   reemplaza por otro con margen, el logo se verá a media altura. */
+.marca-logo{
+  height:13mm;
+  width:auto;
+  display:block;
 }
 
 .folio{ text-align:right; }
@@ -148,19 +124,35 @@
   overflow:hidden;
   background:var(--doc-panel);
 }
+/* Anclada al borde inferior: las fotos son verticales y el elemento a destacar
+   —la piscina, los adoquines, el pastelón— está abajo. Centrada se recorta
+   justo eso y sólo queda cielo y árboles. */
 .portada-hero img{
   width:100%; height:100%;
   object-fit:cover;
+  object-position:center bottom;
   display:block;
 }
+/* Velo desde la derecha. Sin esto el texto blanco desaparece cuando detrás cae
+   una zona clara —el agua de la piscina, un pastelón beige—, que es justo lo
+   que la foto tiene que mostrar. */
+.portada-hero::after{
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(to left,
+    rgba(20,24,20,.52) 0%, rgba(20,24,20,.34) 38%, rgba(20,24,20,0) 72%);
+  pointer-events:none;
+}
+
 .portada-hero-texto{
   position:absolute;
+  z-index:1;
   right:var(--doc-pad);
   top:50%;
   transform:translateY(-50%);
   text-align:right;
   color:#fff;
-  text-shadow:0 1px 12px rgba(0,0,0,.32);
+  text-shadow:0 1px 10px rgba(0,0,0,.45);
   max-width:95mm;
 }
 .portada-hero-rotulo{
@@ -351,8 +343,7 @@
 .desglose tbody tr{ break-inside:avoid; }
 .desglose tbody tr:nth-child(even){ background:rgba(0,0,0,.015); }
 
-/* Bloque de cierre: NETO / IVA / TOTAL.
-   La referencia sólo trae TOTAL NETO; el usuario pidió las tres líneas. */
+/* Bloque de cierre. Las cotizaciones van sólo en valor neto: sin IVA. */
 .totales{ margin-bottom:6mm; }
 .totales-fila{
   display:flex;
@@ -362,13 +353,10 @@
   font-size:9pt;
   color:var(--doc-ink-2);
 }
-.totales-fila + .totales-fila{ border-top:0.4pt solid var(--doc-line); }
 .totales-fila.es-total{
   background:var(--doc-panel);
   border-radius:var(--doc-radio);
-  padding:3.8mm 5mm;
-  border-top:none;
-  margin-top:1.5mm;
+  padding:4.6mm 5mm;
 }
 .totales-fila.es-total .totales-rotulo{
   font-family:'Jost', sans-serif;

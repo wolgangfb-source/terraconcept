@@ -159,18 +159,39 @@ async function cargarCatalogo() {
     no_incluye: items.data.filter((i) => i.linea_id === l.id && i.tipo === 'no_incluye'),
   }));
 
-  // Selector de partidas
+  // Selector de línea (familia). Manda sobre el de partidas: primero se elige
+  // la línea y eso acota el tarifario a lo que corresponde.
+  const familias = [...new Set(cat.lineas.map((l) => l.familia))];
+  const selFam = $('f-familia');
+  selFam.innerHTML = '<option value="">Seleccionar…</option>';
+  for (const f of familias) {
+    const o = document.createElement('option');
+    o.value = f;
+    o.textContent = f;
+    selFam.appendChild(o);
+  }
+
+  pintarPartidas('');
+
+  pintarClientesConocidos();
+}
+
+// Deja en el selector de partidas sólo las de la línea elegida.
+function pintarPartidas(familia) {
   const sel = $('f-linea');
-  sel.innerHTML = '<option value="">Seleccionar…</option>';
-  for (const l of cat.lineas) {
+  const dela = familia ? cat.lineas.filter((l) => l.familia === familia) : [];
+
+  sel.innerHTML = familia
+    ? '<option value="">Seleccionar…</option>'
+    : '<option value="">Elegir una línea primero…</option>';
+
+  for (const l of dela) {
     const o = document.createElement('option');
     o.value = l.id;
     o.textContent = l.subtitulo ? `${l.nombre} — ${l.subtitulo}` : l.nombre;
     sel.appendChild(o);
   }
-
-  pintarClientesConocidos();
-  $('r-iva-pct').textContent = cat.parametros.iva_pct ?? '19';
+  sel.disabled = !familia;
 }
 
 // Autocompletado del campo Cliente. Se repinta al crear uno nuevo, para que
@@ -185,7 +206,8 @@ function reiniciar() {
   cot.validez_dias = Number(cat.parametros.validez_dias ?? 7);
   cot.plazo_ejecucion = cat.parametros.plazo_ejecucion_default ?? '';
 
-  $('f-estado').value = 'borrador';
+  $('f-familia').value = '';
+  pintarPartidas('');
   $('f-linea').value = '';
   $('f-cantidad').value = '';
   $('f-cliente').value = '';
@@ -201,9 +223,21 @@ function reiniciar() {
   $('pista-minimo').textContent = '';
   $('rotulo-unidad').textContent = '';
 
+  bloquearEstado(true);
   mostrarAviso('');
   pintarFilas();
   render();
+}
+
+// Toda cotización nueva parte como borrador y el estado queda bloqueado. Sólo
+// se libera al abrir una ya guardada, que es cuando cambiar de estado tiene
+// sentido: enviada, aceptada, rechazada.
+function bloquearEstado(bloquear) {
+  $('f-estado').value = cot.estado;
+  $('f-estado').disabled = bloquear;
+  $('pista-estado').textContent = bloquear
+    ? 'Toda cotización nueva parte como borrador. El estado se puede cambiar una vez guardada.'
+    : '';
 }
 
 // ---------------------------------------------------------------------------
@@ -234,6 +268,19 @@ $('f-linea').addEventListener('change', () => {
 
 $('f-estado').addEventListener('change', () => { cot.estado = $('f-estado').value; });
 
+$('f-familia').addEventListener('change', () => {
+  pintarPartidas($('f-familia').value);
+  // Cambiar de línea invalida la partida elegida y su fila propuesta.
+  cot.linea = null;
+  cot.detalle = cot.detalle.filter((d) => !d._auto);
+  $('f-linea').value = '';
+  $('pista-linea').textContent = '';
+  $('pista-minimo').textContent = '';
+  $('rotulo-unidad').textContent = '';
+  pintarFilas();
+  render();
+});
+
 $('f-cantidad').addEventListener('input', () => {
   cot.cantidad = $('f-cantidad').value === '' ? null : Number($('f-cantidad').value);
   proponerDetalle();
@@ -242,18 +289,25 @@ $('f-cantidad').addEventListener('input', () => {
   render();
 });
 
+// Cantidad que se cobra. El mínimo de la partida no es un tope que bloquee:
+// si el cliente pide 5 m² y el mínimo son 28, el detalle registra los 5 m²
+// reales pero se cobran los 28. Nunca se cobra menos que el mínimo.
+function cantidadCobrada() {
+  if (!cot.linea || !cot.cantidad) return 0;
+  return Math.max(Number(cot.cantidad), Number(cot.linea.minimo));
+}
+
 // La primera fila del desglose se propone desde el tarifario. Queda editable:
 // en la cotización de referencia el total no sale de multiplicar el precio base,
 // sino de partidas propias (radier, mano de obra, logística).
 function proponerDetalle() {
   if (!cot.linea || !cot.cantidad) return;
-  const valor = Math.round(cot.cantidad * cot.linea.precio_base);
   const propuesta = {
     descripcion: cot.linea.nombre,
-    cantidad: cot.cantidad,
+    cantidad: cot.cantidad,                 // lo que realmente se instala
     unidad: cot.linea.unidad,
     precio_unitario: cot.linea.precio_base,
-    valor,
+    valor: Math.round(cantidadCobrada() * cot.linea.precio_base),
     _auto: true,
   };
   const i = cot.detalle.findIndex((d) => d._auto);
@@ -261,14 +315,17 @@ function proponerDetalle() {
   else cot.detalle.unshift(propuesta);
 }
 
+// Informa cuando se está aplicando el mínimo. No es un error: es cómo se cobra.
 function validarMinimo() {
   const el = $('pista-minimo');
   el.className = 'pista';
   if (!cot.linea || !cot.cantidad) { el.textContent = ''; return; }
+
   const min = Number(cot.linea.minimo);
-  if (cot.cantidad < min) {
-    el.textContent = `Bajo el mínimo de ${min} ${UNIDAD_ROTULO[cot.linea.unidad]} de esta partida.`;
-    el.classList.add('alerta');
+  const u = UNIDAD_ROTULO[cot.linea.unidad];
+  if (Number(cot.cantidad) < min) {
+    el.textContent = `Se instalan ${cot.cantidad} ${u}, pero se cobra el mínimo de `
+      + `${min} ${u} = ${clp(min * cot.linea.precio_base)}.`;
   } else {
     el.textContent = '';
   }
@@ -320,8 +377,11 @@ function pintarFilas() {
     fila.innerHTML = `
       <input type="text"   value="${esc(d.descripcion)}" placeholder="Descripción" data-c="descripcion">
       <input type="number" class="num" value="${d.cantidad ?? ''}" placeholder="—" step="0.01" data-c="cantidad">
+      <input type="number" class="num" value="${d.precio_unitario ?? ''}" placeholder="—" step="1" data-c="precio_unitario">
       <input type="number" class="num" value="${d.valor ?? 0}" placeholder="0" step="1" data-c="valor">
       <button class="fila-quitar" title="Quitar fila">×</button>`;
+
+    const inputValor = fila.querySelector('[data-c="valor"]');
 
     fila.querySelectorAll('input').forEach((inp) => {
       inp.addEventListener('input', () => {
@@ -329,9 +389,21 @@ function pintarFilas() {
         // Editar cualquier campo a mano desengancha la fila de la propuesta
         // automática, para no pisar lo que escribió el usuario.
         d._auto = false;
-        if (c === 'descripcion') d.descripcion = inp.value;
-        else if (c === 'cantidad') d.cantidad = inp.value === '' ? null : Number(inp.value);
-        else d.valor = Number(inp.value || 0);
+
+        if (c === 'descripcion') {
+          d.descripcion = inp.value;
+        } else if (c === 'valor') {
+          // Escribir el valor a mano manda: hay filas sin cantidad ni precio
+          // unitario que tengan sentido, como "Logística y traslado".
+          d.valor = Number(inp.value || 0);
+        } else {
+          d[c] = inp.value === '' ? null : Number(inp.value);
+          // Con cantidad y precio unitario, el valor se calcula solo.
+          if (d.cantidad != null && d.precio_unitario != null) {
+            d.valor = Math.round(d.cantidad * d.precio_unitario);
+            inputValor.value = d.valor;
+          }
+        }
         recalcular();
         render();
       });
@@ -349,37 +421,23 @@ function pintarFilas() {
   recalcular();
 }
 
+// Las cotizaciones van sólo en valor neto: sin IVA.
 function totales() {
   const neto = cot.detalle.reduce((s, d) => s + (Number(d.valor) || 0), 0);
-  const ivaPct = Number(cat.parametros.iva_pct ?? 19);
-  const iva = Math.round(neto * ivaPct / 100);
-  return { neto, ivaPct, iva, total: neto + iva };
+  return { neto, total: neto };
 }
 
 function recalcular() {
-  const t = totales();
-  $('r-neto').textContent = clp(t.neto);
-  $('r-iva').textContent = clp(t.iva);
-  $('r-total').textContent = clp(t.total);
+  $('r-total').textContent = clp(totales().total);
 }
 
 // ---------------------------------------------------------------------------
 // Render del documento
 // ---------------------------------------------------------------------------
-const MARCA = `
-  <div class="marca">
-    <div class="marca-sello">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M5 5h14M12 5v9"/>
-        <path d="M5 18c2-2 3.5-2 5.5 0s3.5 2 5.5 0" stroke-width="1.1"/>
-      </svg>
-    </div>
-    <div class="marca-texto">
-      <div class="marca-nombre">TERRA</div>
-      <div class="marca-sub">CONCEPT</div>
-      <div class="marca-tagline">${esc(cat.parametros?.empresa_tagline ?? 'EXTERIORES QUE PERDURAN')}</div>
-    </div>
-  </div>`;
+// Logo oficial del sitio, no una reconstrucción: así el documento y la web
+// muestran exactamente la misma marca.
+const MARCA = `<img class="marca-logo" src="../images/logo_terraconcept.png"
+  alt="Terra Concept — Soluciones para exteriores">`;
 
 const ICONO_CHECK = '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
 const ICONO_EQUIS = '<svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></svg>';
@@ -508,14 +566,8 @@ function paginaPresupuesto() {
       </table>
 
       <div class="totales">
-        <div class="totales-fila">
-          <span class="totales-rotulo">NETO</span><span class="totales-monto">${clp(t.neto)}</span>
-        </div>
-        <div class="totales-fila">
-          <span class="totales-rotulo">IVA ${t.ivaPct}%</span><span class="totales-monto">${clp(t.iva)}</span>
-        </div>
         <div class="totales-fila es-total">
-          <span class="totales-rotulo">TOTAL</span><span class="totales-monto">${clp(t.total)}</span>
+          <span class="totales-rotulo">TOTAL NETO</span><span class="totales-monto">${clp(t.total)}</span>
         </div>
       </div>
 
@@ -622,8 +674,6 @@ async function guardar() {
       validez_dias: cot.validez_dias,
       plazo_ejecucion: cot.plazo_ejecucion || null,
       neto: t.neto,
-      iva_pct: t.ivaPct,
-      iva_monto: t.iva,
       total: t.total,
       snapshot,
     };
@@ -644,6 +694,8 @@ async function guardar() {
       cotizacionId = data.id;
       cot.id = data.id;
       cot.numero = data.numero;
+      // Ya guardada: recién ahora tiene sentido poder cambiarle el estado.
+      bloquearEstado(false);
     }
 
     // 4. Detalle
@@ -839,7 +891,10 @@ async function abrirCotizacion(id, duplicar) {
 // Vuelca el estado `cot` a los campos del formulario. Es el camino inverso de
 // los listeners de arriba, que van del formulario al estado.
 function volcarAlFormulario() {
-  $('f-estado').value = cot.estado;
+  // La línea manda sobre el selector de partidas: hay que repintarlo antes de
+  // poder seleccionar la partida guardada.
+  $('f-familia').value = cot.linea ? cot.linea.familia : '';
+  pintarPartidas(cot.linea ? cot.linea.familia : '');
   $('f-linea').value = cot.linea ? cot.linea.id : '';
   $('f-cantidad').value = cot.cantidad ?? '';
   $('f-cliente').value = cot.cliente.nombre;
@@ -858,6 +913,9 @@ function volcarAlFormulario() {
     $('pista-linea').textContent =
       `${clp(cot.linea.precio_base)} por ${u} · mínimo ${Number(cot.linea.minimo)} ${u}`;
   }
+  // Una copia arranca de cero como borrador; una cotización ya guardada sí
+  // puede cambiar de estado.
+  bloquearEstado(cot.id === null);
   validarMinimo();
   pintarFilas();
   render();

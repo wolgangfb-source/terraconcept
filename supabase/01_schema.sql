@@ -144,9 +144,10 @@ create table if not exists cotizaciones (
 
   estado           estado_cotizacion not null default 'borrador',
 
+  -- Las cotizaciones van solo en valor neto: sin IVA.
+  -- `total` se mantiene separado de `neto` como gancho para ajustes futuros
+  -- (descuentos, recargos); hoy son iguales.
   neto             integer not null default 0,
-  iva_pct          numeric(5,2) not null default 19,
-  iva_monto        integer not null default 0,
   total            integer not null default 0,
 
   notas            text,
@@ -160,6 +161,12 @@ create table if not exists cotizaciones (
   updated_at       timestamptz not null default now(),
   created_by       uuid default auth.uid() references auth.users(id) on delete set null
 );
+
+-- El IVA se eliminó del alcance: las cotizaciones van sólo en valor neto.
+-- Guardas para que el archivo siga siendo idempotente contra una base que ya
+-- tenía estas columnas.
+alter table cotizaciones drop column if exists iva_pct;
+alter table cotizaciones drop column if exists iva_monto;
 
 create index if not exists cotizaciones_numero_idx  on cotizaciones (numero desc);
 create index if not exists cotizaciones_cliente_idx on cotizaciones (cliente_id);

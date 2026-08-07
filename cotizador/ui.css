@@ -45,16 +45,10 @@ button, input, select, textarea{ font-family:inherit; font-size:inherit; color:i
   padding:44px 40px;
   width:100%; max-width:380px;
 }
-.login-marca{
-  font-family:'Jost', sans-serif;
-  font-size:22px; letter-spacing:.30em;
-  text-align:center;
-}
-.login-sub{
-  font-family:'Jost', sans-serif;
-  font-size:10px; letter-spacing:.30em;
-  text-align:center; color:var(--ink-soft);
-  margin-top:6px;
+.login-logo{
+  display:block;
+  width:100%; max-width:230px; height:auto;
+  margin:0 auto;
 }
 .login-titulo{
   font-family:'Jost', sans-serif;
@@ -138,7 +132,7 @@ button, input, select, textarea{ font-family:inherit; font-size:inherit; color:i
 .topbar-nav{ display:flex; gap:6px; margin-left:10px; }
 .nav-btn.activo{ background:rgba(247,245,240,.18) !important; border-color:rgba(247,245,240,.5) !important; }
 
-.espacio{ flex:1 1 auto; display:grid; grid-template-columns:400px 1fr; min-height:0; }
+.espacio{ flex:1 1 auto; display:grid; grid-template-columns:460px 1fr; min-height:0; }
 
 /* Sólo una de las dos vistas está montada a la vez. */
 .espacio[hidden], .listado[hidden]{ display:none; }
@@ -173,7 +167,7 @@ button, input, select, textarea{ font-family:inherit; font-size:inherit; color:i
 .filas{ display:flex; flex-direction:column; gap:8px; }
 .fila{
   display:grid;
-  grid-template-columns:1fr 66px 92px 26px;
+  grid-template-columns:1fr 54px 80px 88px 22px;
   gap:6px; align-items:center;
 }
 .fila input{
@@ -193,14 +187,15 @@ button, input, select, textarea{ font-family:inherit; font-size:inherit; color:i
 .fila-quitar:hover{ color:var(--danger); }
 .filas-cabecera{
   display:grid;
-  grid-template-columns:1fr 66px 92px 26px;
+  grid-template-columns:1fr 54px 80px 88px 22px;
   gap:6px;
   font-size:10px; letter-spacing:.06em; text-transform:uppercase;
   color:var(--stone);
   margin-bottom:6px;
 }
 .filas-cabecera span:nth-child(2),
-.filas-cabecera span:nth-child(3){ text-align:right; }
+.filas-cabecera span:nth-child(3),
+.filas-cabecera span:nth-child(4){ text-align:right; }
 
 .resumen{
   margin-top:14px; padding-top:12px;
