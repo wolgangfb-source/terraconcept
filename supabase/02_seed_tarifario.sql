@@ -335,6 +335,8 @@ insert into parametros (clave, valor, descripcion) values
   ('atributo_4_titulo', 'DISEÑO QUE INTEGRA', 'Atributo 4 de la portada.'),
   ('atributo_4_texto',  'Armonía entre arquitectura, paisajismo y entorno.', 'Atributo 4 de la portada.'),
 
+  ('nota_valores', 'Valores netos. No incluyen IVA.',
+   'Glosa bajo el total, en la página de presupuesto.'),
   ('nota_alcance', 'Los valores presentados son referenciales. Se requiere visita técnica para confirmar medidas y condiciones del proyecto.',
    'Nota al pie de la página de alcance.'),
   ('nota_visita_tecnica', 'Es necesario realizar una visita técnica a terreno para verificar medidas y condiciones del proyecto. El valor de la visita es de 1 UF, el cual será abonado al monto total en caso de aprobar la propuesta.',

@@ -358,6 +358,12 @@
   border-radius:var(--doc-radio);
   padding:4.6mm 5mm;
 }
+.totales-glosa{
+  text-align:right;
+  font-size:7.5pt;
+  color:var(--doc-ink-2);
+  padding:2mm 5mm 0;
+}
 .totales-fila.es-total .totales-rotulo{
   font-family:'Jost', sans-serif;
   font-size:11pt;

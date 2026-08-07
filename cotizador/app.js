@@ -569,6 +569,7 @@ function paginaPresupuesto() {
         <div class="totales-fila es-total">
           <span class="totales-rotulo">TOTAL NETO</span><span class="totales-monto">${clp(t.total)}</span>
         </div>
+        <p class="totales-glosa">${esc(cat.parametros.nota_valores ?? '')}</p>
       </div>
 
       <div class="avisos">
