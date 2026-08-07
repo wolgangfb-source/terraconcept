@@ -268,6 +268,12 @@
     transition:transform .7s ease;
   }
   .spec-card:hover .spec-img img{transform:scale(1.06);}
+  .spec-img.pan-8 img.pan-img{
+    position:absolute; inset:0;
+    opacity:0;
+    transition:opacity .45s ease, transform .8s ease;
+  }
+  .spec-img.pan-8 img.pan-img.active{opacity:1;}
   .spec-tag{
     position:absolute; top:18px; left:18px;
     background:rgba(247,245,240,0.92);
@@ -546,9 +552,16 @@
   <div class="wrap">
     <div class="specialties" data-reveal-group>
       <article class="spec-card reveal-item">
-        <div class="spec-img">
+        <div class="spec-img pan-8" id="piscinaPan">
           <span class="spec-tag">Piscinas</span>
-          <img src="images/piscina.jpg" alt="Instalación de bordes de piscina Terra Concept">
+          <img class="pan-img active" data-dir="S" src="images/piscina_dirs/S.jpg" alt="Instalación de bordes de piscina Terra Concept">
+          <img class="pan-img" data-dir="N" src="images/piscina_dirs/N.jpg" alt="">
+          <img class="pan-img" data-dir="NE" src="images/piscina_dirs/NE.jpg" alt="">
+          <img class="pan-img" data-dir="E" src="images/piscina_dirs/E.jpg" alt="">
+          <img class="pan-img" data-dir="SE" src="images/piscina_dirs/SE.jpg" alt="">
+          <img class="pan-img" data-dir="SW" src="images/piscina_dirs/SW.jpg" alt="">
+          <img class="pan-img" data-dir="W" src="images/piscina_dirs/W.jpg" alt="">
+          <img class="pan-img" data-dir="NW" src="images/piscina_dirs/NW.jpg" alt="">
         </div>
         <div class="spec-body">
           <span class="spec-kicker">Una instalación profesional</span>
@@ -868,6 +881,36 @@
       container.style.transition = 'opacity 1.3s ease';
       container.style.opacity = '1';
     });
+  })();
+</script>
+
+<!-- Efecto de paneo por punto cardinal: tarjeta Piscinas, prueba en producción -->
+<script>
+  (function initPiscinaPan(){
+    const box = document.getElementById('piscinaPan');
+    if (!box) return;
+    const imgs = box.querySelectorAll('img.pan-img');
+    if (!imgs.length) return;
+    const DEFAULT_DIR = 'S';
+    const ORDER = ['E','SE','S','SW','W','NW','N','NE']; // idx 0..7 por ángulo (0°=E, 90°=S, -90°=N)
+
+    function setActive(dir){
+      imgs.forEach(img => img.classList.toggle('active', img.dataset.dir === dir));
+    }
+
+    box.addEventListener('mousemove', (e) => {
+      const rect = box.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      const dist = Math.hypot(x, y);
+      const deadzone = Math.min(rect.width, rect.height) * 0.12;
+      if (dist < deadzone) { setActive(DEFAULT_DIR); return; }
+      const angleDeg = Math.atan2(y, x) * 180 / Math.PI;
+      const idx = (((Math.round(angleDeg / 45) % 8) + 8) % 8);
+      setActive(ORDER[idx]);
+    });
+
+    box.addEventListener('mouseleave', () => setActive(DEFAULT_DIR));
   })();
 </script>
 
