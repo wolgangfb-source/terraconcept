@@ -1,4 +1,8 @@
 # El repo es publico. Nada de credenciales aca.
+
+# CLAUDE.md lleva las credenciales de acceso del proyecto: queda SOLO en local.
+CLAUDE.md
+
 .env
 .env.*
 *.local

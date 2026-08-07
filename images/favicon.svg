@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Terra Concept">
+  <!-- Isotipo Terra Concept: T sobre una onda sobre una C, dentro de un marco
+       redondeado. Vectorial a proposito: nitido en 16px y en 512px. -->
+  <rect x="6" y="6" width="88" height="88" rx="10"
+        fill="#f7f5f0" stroke="#1a1a1a" stroke-width="4.6"/>
+  <g fill="none" stroke="#1a1a1a" stroke-width="4.6" stroke-linecap="square">
+    <!-- T -->
+    <path d="M36 25h28"/>
+    <path d="M50 25v21"/>
+    <!-- Onda. Amplitud contenida (y 53-62) para no invadir la C. -->
+    <path d="M20 58C27 55 33 62 43 62s14-9 24-9c6 0 9 2 13 4"
+          stroke-linecap="round" stroke-width="4.2"/>
+    <!-- C. Centrada en (50,78), r=10, con una abertura de 90 grados a la derecha. -->
+    <path d="M57 71A10 10 0 1 0 57 85" stroke-linecap="round"/>
+  </g>
+</svg>
