@@ -271,7 +271,7 @@
   .spec-img.pan-8 img.pan-img{
     position:absolute; inset:0;
     opacity:0;
-    transition:opacity .45s ease, transform .8s ease;
+    transition:opacity .9s cubic-bezier(.4,0,.2,1), transform .9s ease;
   }
   .spec-img.pan-8 img.pan-img.active{opacity:1;}
   .spec-tag{
@@ -892,7 +892,20 @@
     const imgs = box.querySelectorAll('img.pan-img');
     if (!imgs.length) return;
     const DEFAULT_DIR = 'S';
-    const ORDER = ['E','SE','S','SW','W','NW','N','NE']; // idx 0..7 por ángulo (0°=E, 90°=S, -90°=N)
+
+    // Zonas repartidas proporcionalmente sobre el ancho/alto de la imagen (grilla 3x3),
+    // en vez de por ángulo — así las transiciones no se amontonan en el centro.
+    const LO = 1 / 3, HI = 2 / 3;
+    const MARGIN = 0.05; // banda de histéresis para que no "parpadee" justo en el límite
+    let colState = 'mid', rowState = 'mid';
+
+    function updateAxis(frac, state){
+      if (state === 'low')  return frac > LO + MARGIN ? (frac > HI + MARGIN ? 'high' : 'mid') : 'low';
+      if (state === 'high') return frac < HI - MARGIN ? (frac < LO - MARGIN ? 'low' : 'mid') : 'high';
+      if (frac < LO - MARGIN) return 'low';
+      if (frac > HI + MARGIN) return 'high';
+      return 'mid';
+    }
 
     function setActive(dir){
       imgs.forEach(img => img.classList.toggle('active', img.dataset.dir === dir));
@@ -900,17 +913,22 @@
 
     box.addEventListener('mousemove', (e) => {
       const rect = box.getBoundingClientRect();
-      const x = e.clientX - rect.left - rect.width / 2;
-      const y = e.clientY - rect.top - rect.height / 2;
-      const dist = Math.hypot(x, y);
-      const deadzone = Math.min(rect.width, rect.height) * 0.12;
-      if (dist < deadzone) { setActive(DEFAULT_DIR); return; }
-      const angleDeg = Math.atan2(y, x) * 180 / Math.PI;
-      const idx = (((Math.round(angleDeg / 45) % 8) + 8) % 8);
-      setActive(ORDER[idx]);
+      const xFrac = (e.clientX - rect.left) / rect.width;
+      const yFrac = (e.clientY - rect.top) / rect.height;
+
+      colState = updateAxis(xFrac, colState);
+      rowState = updateAxis(yFrac, rowState);
+
+      if (colState === 'mid' && rowState === 'mid') { setActive(DEFAULT_DIR); return; }
+      const rowPart = rowState === 'low' ? 'N' : rowState === 'high' ? 'S' : '';
+      const colPart = colState === 'low' ? 'W' : colState === 'high' ? 'E' : '';
+      setActive(rowPart + colPart || DEFAULT_DIR);
     });
 
-    box.addEventListener('mouseleave', () => setActive(DEFAULT_DIR));
+    box.addEventListener('mouseleave', () => {
+      colState = 'mid'; rowState = 'mid';
+      setActive(DEFAULT_DIR);
+    });
   })();
 </script>
 
