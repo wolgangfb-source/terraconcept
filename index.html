@@ -147,12 +147,36 @@
     position:absolute; inset:0;
     background-image:url('images/piscina.jpg');
     background-size:cover;
-    background-position:center 30%;
-    filter:saturate(0.95);
+    background-position:center 40%;
+    /* En reposo la foto va algo apagada: el titular tiene que leerse encima.
+       Al pasar el mouse recupera brillo y color, y el degradado cede. */
+    filter:saturate(0.92) brightness(0.80);
+    transition:filter .7s cubic-bezier(.4,0,.2,1);
   }
   .hero-overlay{
     position:absolute; inset:0;
-    background:linear-gradient(180deg, rgba(20,30,20,0.55) 0%, rgba(20,30,20,0.25) 38%, rgba(18,26,17,0.85) 100%);
+    /* Dos capas: una vertical que asienta el pie, y una desde la izquierda que
+       sostiene el titular. El texto va a la izquierda y justo ahí la foto tiene
+       el agua, que es su zona más clara. Oscurecer sólo esa banda deja el resto
+       de la imagen limpia y mantiene el filtro general suave. */
+    background:
+      linear-gradient(90deg,
+        rgba(18,26,17,0.52) 0%,
+        rgba(18,26,17,0.30) 38%,
+        rgba(18,26,17,0) 68%),
+      linear-gradient(180deg,
+        rgba(20,30,20,0.55) 0%,
+        rgba(20,30,20,0.24) 32%,
+        rgba(18,26,17,0.52) 64%,
+        rgba(18,26,17,0.90) 100%);
+    transition:opacity .7s cubic-bezier(.4,0,.2,1);
+  }
+  .hero:hover .hero-bg{ filter:saturate(1.04) brightness(1); }
+  /* No se apaga del todo: sin algo de velo el texto blanco del pie desaparece. */
+  .hero:hover .hero-overlay{ opacity:.5; }
+
+  @media (prefers-reduced-motion: reduce){
+    .hero-bg, .hero-overlay{ transition:none; }
   }
   .hero-3d{
     position:absolute; z-index:1;
