@@ -1,0 +1,318 @@
+/* ==========================================================================
+   Terra Concept — Cotizador
+   ui.css — la interfaz de la app (no entra al PDF)
+
+   Hereda la identidad del sitio: verde oscuro + crema, Jost + Inter.
+   ========================================================================== */
+
+:root{
+  --green:     #1c2b1f;
+  --green-2:   #2a3c26;
+  --cream:     #f7f5f0;
+  --cream-2:   #efece3;
+  --ink:       #23261f;
+  --ink-soft:  #55584e;
+  --stone:     #a89f92;
+  --line:      #ddd7c8;
+  --danger:    #9c3b2e;
+  --ok:        #3d6b47;
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+body{
+  font-family:'Inter', system-ui, sans-serif;
+  font-weight:300;
+  color:var(--ink);
+  background:var(--cream-2);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+button, input, select, textarea{ font-family:inherit; font-size:inherit; color:inherit; }
+
+/* ==========================================================================
+   Login
+   ========================================================================== */
+.login{
+  min-height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--green);
+  padding:24px;
+}
+.login-caja{
+  background:var(--cream);
+  padding:44px 40px;
+  width:100%; max-width:380px;
+}
+.login-marca{
+  font-family:'Jost', sans-serif;
+  font-size:22px; letter-spacing:.30em;
+  text-align:center;
+}
+.login-sub{
+  font-family:'Jost', sans-serif;
+  font-size:10px; letter-spacing:.30em;
+  text-align:center; color:var(--ink-soft);
+  margin-top:6px;
+}
+.login-titulo{
+  font-family:'Jost', sans-serif;
+  font-size:13px; letter-spacing:.18em;
+  text-align:center; color:var(--ink-soft);
+  margin:26px 0 22px;
+  padding-top:22px;
+  border-top:1px solid var(--line);
+}
+
+/* ==========================================================================
+   Campos
+   ========================================================================== */
+.campo{ margin-bottom:14px; }
+.campo label{
+  display:block;
+  font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-soft);
+  margin-bottom:5px;
+}
+.campo input, .campo select, .campo textarea{
+  width:100%;
+  padding:9px 11px;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:2px;
+  font-weight:300;
+}
+.campo input:focus, .campo select:focus, .campo textarea:focus{
+  outline:none; border-color:var(--green-2);
+}
+.campo-fila{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+.pista{ font-size:11px; color:var(--ink-soft); margin-top:4px; }
+.pista.alerta{ color:var(--danger); }
+
+/* ==========================================================================
+   Botones
+   ========================================================================== */
+.btn{
+  display:inline-block;
+  padding:10px 20px;
+  border:1px solid var(--green);
+  background:var(--green);
+  color:var(--cream);
+  cursor:pointer;
+  font-family:'Jost', sans-serif;
+  font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  border-radius:2px;
+}
+.btn:hover:not(:disabled){ background:var(--green-2); }
+.btn:disabled{ opacity:.45; cursor:not-allowed; }
+.btn.ancho{ width:100%; }
+.btn.suave{ background:transparent; color:var(--green); }
+.btn.suave:hover:not(:disabled){ background:rgba(28,43,31,.07); }
+.btn.chico{ padding:5px 11px; font-size:11px; letter-spacing:.1em; }
+
+/* ==========================================================================
+   Estructura de la app
+   ========================================================================== */
+.app{ display:none; min-height:100vh; flex-direction:column; }
+.app.visible{ display:flex; }
+
+.topbar{
+  background:var(--green);
+  color:var(--cream);
+  padding:11px 22px;
+  display:flex; align-items:center; gap:18px;
+  flex:0 0 auto;
+}
+.topbar-marca{ font-family:'Jost', sans-serif; font-size:15px; letter-spacing:.26em; }
+.topbar-sec{ font-family:'Jost', sans-serif; font-size:11px; letter-spacing:.18em; opacity:.65; }
+.topbar-usuario{ margin-left:auto; font-size:12px; opacity:.75; }
+.topbar .btn{
+  border-color:rgba(247,245,240,.35);
+  background:transparent; color:var(--cream);
+  padding:6px 14px; font-size:11px;
+}
+.topbar .btn:hover:not(:disabled){ background:rgba(247,245,240,.12); }
+
+.topbar-nav{ display:flex; gap:6px; margin-left:10px; }
+.nav-btn.activo{ background:rgba(247,245,240,.18) !important; border-color:rgba(247,245,240,.5) !important; }
+
+.espacio{ flex:1 1 auto; display:grid; grid-template-columns:400px 1fr; min-height:0; }
+
+/* Sólo una de las dos vistas está montada a la vez. */
+.espacio[hidden], .listado[hidden]{ display:none; }
+
+.panel{
+  background:var(--cream);
+  border-right:1px solid var(--line);
+  overflow-y:auto;
+  padding:22px;
+}
+.panel h2{
+  font-family:'Jost', sans-serif;
+  font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink-soft);
+  margin:22px 0 12px;
+  padding-bottom:7px;
+  border-bottom:1px solid var(--line);
+}
+.panel h2:first-child{ margin-top:0; }
+
+.lienzo{
+  overflow:auto;
+  background:#e8e6e0;
+  padding:22px;
+  display:flex; justify-content:center;
+}
+.lienzo-interno{ transform-origin:top center; }
+
+/* ==========================================================================
+   Desglose editable
+   ========================================================================== */
+.filas{ display:flex; flex-direction:column; gap:8px; }
+.fila{
+  display:grid;
+  grid-template-columns:1fr 66px 92px 26px;
+  gap:6px; align-items:center;
+}
+.fila input{
+  padding:7px 8px;
+  border:1px solid var(--line);
+  background:#fff; border-radius:2px;
+  font-size:13px; font-weight:300;
+  min-width:0;
+}
+.fila input:focus{ outline:none; border-color:var(--green-2); }
+.fila input.num{ text-align:right; }
+.fila-quitar{
+  border:0; background:transparent;
+  color:var(--stone); cursor:pointer;
+  font-size:17px; line-height:1; padding:2px;
+}
+.fila-quitar:hover{ color:var(--danger); }
+.filas-cabecera{
+  display:grid;
+  grid-template-columns:1fr 66px 92px 26px;
+  gap:6px;
+  font-size:10px; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--stone);
+  margin-bottom:6px;
+}
+.filas-cabecera span:nth-child(2),
+.filas-cabecera span:nth-child(3){ text-align:right; }
+
+.resumen{
+  margin-top:14px; padding-top:12px;
+  border-top:1px solid var(--line);
+  font-size:13px;
+}
+.resumen div{ display:flex; justify-content:space-between; padding:3px 0; }
+.resumen .total{
+  font-family:'Jost', sans-serif;
+  font-size:16px; letter-spacing:.06em;
+  margin-top:6px; padding-top:8px;
+  border-top:1px solid var(--line);
+}
+
+.acciones{ display:flex; gap:8px; margin-top:20px; }
+.acciones .btn{ flex:1; }
+
+/* ==========================================================================
+   Listado de cotizaciones
+   ========================================================================== */
+.listado{
+  flex:1 1 auto;
+  overflow-y:auto;
+  padding:24px 28px 60px;
+  background:var(--cream);
+}
+
+.listado-barra{ display:flex; gap:10px; margin-bottom:18px; }
+.listado-barra input[type="search"]{
+  flex:1;
+  padding:9px 12px;
+  border:1px solid var(--line);
+  background:#fff; border-radius:2px; font-weight:300;
+}
+.listado-barra select{
+  padding:9px 12px;
+  border:1px solid var(--line);
+  background:#fff; border-radius:2px; font-weight:300;
+}
+.listado-barra input:focus, .listado-barra select:focus{ outline:none; border-color:var(--green-2); }
+
+.tabla{ width:100%; border-collapse:collapse; font-size:13px; }
+.tabla thead th{
+  text-align:left;
+  font-family:'Jost', sans-serif;
+  font-weight:400; font-size:11px;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-soft);
+  padding:9px 12px;
+  border-bottom:1px solid var(--line);
+}
+.tabla thead th.der, .tabla td.der{ text-align:right; }
+.tabla tbody td{ padding:10px 12px; border-bottom:1px solid var(--line); }
+.tabla tbody tr:hover{ background:rgba(168,159,146,.10); }
+.tabla .num{
+  font-family:'Jost', sans-serif;
+  letter-spacing:.06em;
+}
+.tabla .acciones-fila{ display:flex; gap:5px; justify-content:flex-end; }
+
+.pildora{
+  display:inline-block;
+  padding:2px 9px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  font-size:11px; letter-spacing:.04em;
+  text-transform:capitalize;
+}
+.pildora.borrador { color:var(--ink-soft); }
+.pildora.enviada  { color:#3f5d86; border-color:#c3cfe0; }
+.pildora.aceptada { color:var(--ok); border-color:#bfd4c4; }
+.pildora.rechazada{ color:var(--danger); border-color:#e0c3bd; }
+.pildora.anulada  { color:var(--stone); text-decoration:line-through; }
+
+.listado-vacio{
+  padding:30px 12px;
+  color:var(--ink-soft);
+  font-size:13px;
+}
+
+/* ==========================================================================
+   Avisos
+   ========================================================================== */
+.aviso-ui{
+  padding:9px 12px;
+  border-left:2px solid var(--stone);
+  background:rgba(168,159,146,.12);
+  font-size:12px;
+  margin-bottom:14px;
+}
+.aviso-ui.error{ border-color:var(--danger); background:rgba(156,59,46,.09); color:var(--danger); }
+.aviso-ui.ok{ border-color:var(--ok); background:rgba(61,107,71,.09); color:var(--ok); }
+.aviso-ui:empty{ display:none; }
+
+.cargando{
+  position:fixed; inset:0;
+  background:rgba(28,43,31,.85);
+  color:var(--cream);
+  display:none; align-items:center; justify-content:center;
+  font-family:'Jost', sans-serif; letter-spacing:.18em; font-size:13px;
+  z-index:99;
+}
+.cargando.visible{ display:flex; }
+
+/* ==========================================================================
+   Impresión: sólo el documento
+   ========================================================================== */
+@media print{
+  .topbar, .panel, .cargando, .listado{ display:none !important; }
+  .espacio{ display:block; }
+  .espacio[hidden]{ display:block !important; }
+  .lienzo{ overflow:visible; background:none; padding:0; display:block; }
+  .lienzo-interno{ transform:none !important; }
+  body{ background:#fff; }
+}

@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# El cotizador (/cotizador/) no se lista aquí a propósito.
+#
+# Un "Disallow" impediría el rastreo, y eso deja a los buscadores sin poder leer
+# la etiqueta noindex de la página — con lo cual la URL igual puede terminar
+# apareciendo en resultados si alguien la enlaza. La combinación que sí funciona
+# es dejar rastrear y responder noindex, que es lo que hace el sitio: la página
+# lleva <meta name="robots" content="noindex, nofollow"> y Netlify agrega la
+# cabecera X-Robots-Tag (ver _headers).
+#
+# El acceso a los datos no depende de nada de esto: lo protegen la autenticación
+# y las políticas RLS de Supabase.

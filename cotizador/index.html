@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Cotizador — Terra Concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="ui.css">
+<link rel="stylesheet" href="documento.css">
+</head>
+<body>
+
+<!-- ======================================================================
+     Login. Sin sesión no se carga nada: la RLS de Supabase rechaza toda
+     lectura, así que esta pantalla no es sólo cosmética.
+     ====================================================================== -->
+<div class="login" id="login">
+  <div class="login-caja">
+    <div class="login-marca">TERRA</div>
+    <div class="login-sub">CONCEPT</div>
+    <div class="login-titulo">COTIZADOR INTERNO</div>
+
+    <div class="aviso-ui error" id="login-error"></div>
+
+    <form id="login-form">
+      <div class="campo">
+        <label for="login-email">Correo</label>
+        <input type="email" id="login-email" autocomplete="username" required>
+      </div>
+      <div class="campo">
+        <label for="login-pass">Contraseña</label>
+        <input type="password" id="login-pass" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn ancho" id="login-btn">Entrar</button>
+    </form>
+  </div>
+</div>
+
+<!-- ======================================================================
+     App
+     ====================================================================== -->
+<div class="app" id="app">
+
+  <header class="topbar">
+    <span class="topbar-marca">TERRA CONCEPT</span>
+    <span class="topbar-sec">COTIZADOR</span>
+    <nav class="topbar-nav">
+      <button class="btn nav-btn activo" id="nav-editor">Editor</button>
+      <button class="btn nav-btn" id="nav-listado">Cotizaciones</button>
+    </nav>
+    <span class="topbar-usuario" id="usuario"></span>
+    <button class="btn" id="btn-salir">Salir</button>
+  </header>
+
+  <div class="espacio" id="vista-editor">
+
+    <!-- ---------------- Formulario ---------------- -->
+    <aside class="panel">
+
+      <div class="aviso-ui" id="aviso"></div>
+
+      <h2>Tipo de cotización</h2>
+      <div class="campo">
+        <label for="f-estado">Estado</label>
+        <select id="f-estado">
+          <option value="borrador">Borrador</option>
+          <option value="enviada">Enviada</option>
+          <option value="aceptada">Aceptada</option>
+          <option value="rechazada">Rechazada</option>
+          <option value="anulada">Anulada</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="f-linea">Partida del tarifario</label>
+        <select id="f-linea">
+          <option value="">Seleccionar…</option>
+        </select>
+        <div class="pista" id="pista-linea"></div>
+      </div>
+
+      <div class="campo">
+        <label for="f-cantidad">Cantidad <span id="rotulo-unidad"></span></label>
+        <input type="number" id="f-cantidad" min="0" step="0.01" placeholder="0">
+        <div class="pista" id="pista-minimo"></div>
+      </div>
+
+      <h2>Cliente</h2>
+      <div class="campo">
+        <label for="f-cliente">Nombre</label>
+        <input type="text" id="f-cliente" list="clientes-conocidos" placeholder="Nombre del cliente">
+        <datalist id="clientes-conocidos"></datalist>
+      </div>
+      <div class="campo-fila">
+        <div class="campo">
+          <label for="f-rut">RUT</label>
+          <input type="text" id="f-rut" placeholder="—">
+        </div>
+        <div class="campo">
+          <label for="f-telefono">Teléfono</label>
+          <input type="text" id="f-telefono" placeholder="—">
+        </div>
+      </div>
+      <div class="campo">
+        <label for="f-email">Correo</label>
+        <input type="email" id="f-email" placeholder="—">
+      </div>
+
+      <h2>Proyecto</h2>
+      <div class="campo">
+        <label for="f-proyecto">Nombre del proyecto</label>
+        <input type="text" id="f-proyecto" placeholder="Instalación de piscina">
+      </div>
+      <div class="campo">
+        <label for="f-direccion">Dirección</label>
+        <input type="text" id="f-direccion" placeholder="—">
+      </div>
+      <div class="campo-fila">
+        <div class="campo">
+          <label for="f-fecha">Fecha</label>
+          <input type="date" id="f-fecha">
+        </div>
+        <div class="campo">
+          <label for="f-validez">Validez (días)</label>
+          <input type="number" id="f-validez" min="1" step="1">
+        </div>
+      </div>
+      <div class="campo">
+        <label for="f-plazo">Plazo de ejecución</label>
+        <input type="text" id="f-plazo" placeholder="5 días hábiles">
+      </div>
+
+      <h2>Desglose de instalación</h2>
+      <div class="filas-cabecera">
+        <span>Descripción</span><span>Cant.</span><span>Valor</span><span></span>
+      </div>
+      <div class="filas" id="filas"></div>
+      <button class="btn suave chico" id="btn-agregar" style="margin-top:10px">+ Agregar fila</button>
+
+      <div class="resumen">
+        <div><span>Neto</span><span id="r-neto">$ 0</span></div>
+        <div><span>IVA <span id="r-iva-pct">19</span>%</span><span id="r-iva">$ 0</span></div>
+        <div class="total"><span>Total</span><span id="r-total">$ 0</span></div>
+      </div>
+
+      <div class="acciones">
+        <button class="btn" id="btn-guardar">Guardar</button>
+        <button class="btn suave" id="btn-pdf">PDF</button>
+      </div>
+      <div class="acciones" style="margin-top:8px">
+        <button class="btn suave" id="btn-nueva">Nueva cotización</button>
+      </div>
+    </aside>
+
+    <!-- ---------------- Vista previa del documento ---------------- -->
+    <main class="lienzo" id="lienzo">
+      <div class="lienzo-interno" id="lienzo-interno">
+        <div class="doc" id="doc"></div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ---------------- Listado, consulta y edición ---------------- -->
+  <section class="listado" id="vista-listado">
+    <div class="listado-barra">
+      <input type="search" id="l-buscar" placeholder="Buscar por número, cliente o proyecto…">
+      <select id="l-estado">
+        <option value="">Todos los estados</option>
+        <option value="borrador">Borrador</option>
+        <option value="enviada">Enviada</option>
+        <option value="aceptada">Aceptada</option>
+        <option value="rechazada">Rechazada</option>
+        <option value="anulada">Anulada</option>
+      </select>
+      <button class="btn suave chico" id="l-refrescar">Refrescar</button>
+    </div>
+
+    <div class="aviso-ui" id="l-aviso"></div>
+
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>N°</th><th>Cliente</th><th>Proyecto</th><th>Fecha</th>
+          <th class="der">Total</th><th>Estado</th><th></th>
+        </tr>
+      </thead>
+      <tbody id="l-filas"></tbody>
+    </table>
+    <p class="listado-vacio" id="l-vacio">No hay cotizaciones todavía.</p>
+  </section>
+</div>
+
+<div class="cargando" id="cargando">CARGANDO…</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

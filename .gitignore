@@ -1,0 +1,13 @@
+# El repo es publico. Nada de credenciales aca.
+.env
+.env.*
+*.local
+secrets.*
+**/service_role*
+**/*secret*
+
+# Herramientas locales
+.claude/
+node_modules/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,455 @@
+/* ==========================================================================
+   Terra Concept — Cotizador
+   documento.css — la cotización impresa (3 páginas A4, 4 si el detalle desborda)
+
+   Fiel a la imagen de referencia entregada por el usuario. Todo en mm para que
+   la pantalla y el PDF midan igual.
+   ========================================================================== */
+
+:root{
+  --doc-bg:      #faf9f6;   /* fondo de página, blanco cálido */
+  --doc-panel:   #f1efe9;   /* bandas y fichas */
+  --doc-ink:     #2b2b29;   /* texto principal */
+  --doc-ink-2:   #6b6a65;   /* texto secundario */
+  --doc-gold:    #b39a6b;   /* acento: reglas, número, íconos */
+  --doc-line:    #dedbd3;   /* separadores */
+  --doc-dark:    #2b2b29;   /* cabecera de la tabla */
+
+  --doc-pad:     14mm;      /* margen lateral del documento */
+  --doc-radio:   2.5mm;     /* redondeo de tablas y fichas */
+}
+
+/* --- Reset acotado al documento ----------------------------------------- */
+.doc *,
+.doc *::before,
+.doc *::after{ box-sizing:border-box; margin:0; padding:0; }
+
+.doc{
+  font-family:'Inter', system-ui, sans-serif;
+  color:var(--doc-ink);
+  font-weight:300;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+.doc h1, .doc h2, .doc h3, .doc h4{
+  font-family:'Jost', system-ui, sans-serif;
+  font-weight:400;
+  line-height:1.2;
+}
+
+/* ==========================================================================
+   Página
+   ========================================================================== */
+.pagina{
+  width:210mm;
+  height:297mm;
+  background:var(--doc-bg);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  position:relative;
+  page-break-after:always;
+  break-after:page;
+}
+.pagina:last-child{ page-break-after:auto; break-after:auto; }
+
+.pagina-cuerpo{ flex:1 1 auto; min-height:0; }
+
+/* --- Cabecera: logo + número de cotización ------------------------------- */
+.doc-header{
+  flex:0 0 auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  padding:9mm var(--doc-pad) 5mm;
+}
+
+.marca{ display:flex; align-items:flex-start; gap:4mm; }
+
+.marca-sello{
+  width:12mm; height:12mm;
+  border:0.5pt solid var(--doc-gold);
+  display:flex; align-items:center; justify-content:center;
+  flex:0 0 auto;
+}
+.marca-sello svg{ width:7mm; height:7mm; }
+
+.marca-texto .marca-nombre{
+  font-family:'Jost', sans-serif;
+  font-size:19pt;
+  letter-spacing:0.30em;
+  line-height:1;
+  color:var(--doc-ink);
+}
+.marca-texto .marca-sub{
+  font-family:'Jost', sans-serif;
+  font-size:8pt;
+  letter-spacing:0.34em;
+  color:var(--doc-ink-2);
+  margin-top:1.6mm;
+  padding-left:0.2em;
+}
+.marca-texto .marca-tagline{
+  font-family:'Jost', sans-serif;
+  font-size:5.6pt;
+  letter-spacing:0.30em;
+  color:var(--doc-ink-2);
+  margin-top:2mm;
+}
+
+.folio{ text-align:right; }
+.folio-rotulo{
+  font-family:'Jost', sans-serif;
+  font-size:7pt;
+  letter-spacing:0.22em;
+  color:var(--doc-gold);
+}
+.folio-numero{
+  font-family:'Jost', sans-serif;
+  font-size:21pt;
+  letter-spacing:0.06em;
+  color:var(--doc-ink);
+  line-height:1.1;
+}
+
+/* --- Pie ----------------------------------------------------------------- */
+.doc-footer{
+  flex:0 0 auto;
+  background:var(--doc-panel);
+  padding:5mm var(--doc-pad);
+  text-align:center;
+  font-family:'Jost', sans-serif;
+  font-size:7pt;
+  letter-spacing:0.30em;
+  color:var(--doc-ink-2);
+}
+
+.doc-footer-contacto{
+  display:flex;
+  justify-content:center;
+  gap:12mm;
+  letter-spacing:0.04em;
+  font-family:'Inter', sans-serif;
+  font-size:8pt;
+}
+.doc-footer-contacto span{ display:flex; align-items:center; gap:2mm; }
+.doc-footer-contacto svg{ width:3.6mm; height:3.6mm; stroke:var(--doc-ink-2); }
+
+/* ==========================================================================
+   Página 1 — Portada
+   ========================================================================== */
+.pagina-cuerpo.portada{ display:flex; flex-direction:column; }
+
+.portada-hero{
+  position:relative;
+  height:113mm;
+  flex:0 0 auto;
+  overflow:hidden;
+  background:var(--doc-panel);
+}
+.portada-hero img{
+  width:100%; height:100%;
+  object-fit:cover;
+  display:block;
+}
+.portada-hero-texto{
+  position:absolute;
+  right:var(--doc-pad);
+  top:50%;
+  transform:translateY(-50%);
+  text-align:right;
+  color:#fff;
+  text-shadow:0 1px 12px rgba(0,0,0,.32);
+  max-width:95mm;
+}
+.portada-hero-rotulo{
+  font-family:'Jost', sans-serif;
+  font-size:10pt;
+  letter-spacing:0.30em;
+  font-weight:300;
+}
+.portada-hero-titulo{
+  font-family:'Jost', sans-serif;
+  font-size:34pt;
+  letter-spacing:0.10em;
+  font-weight:300;
+  margin:1mm 0 4mm;
+}
+.portada-hero-bajada{
+  font-family:'Jost', sans-serif;
+  font-size:9.5pt;
+  letter-spacing:0.16em;
+  line-height:1.7;
+  text-transform:uppercase;
+  font-weight:300;
+}
+
+/* Ocupa lo que sobra bajo la foto y centra su contenido, para que no quede el
+   hueco muerto al pie de la portada. */
+.portada-inferior{
+  flex:1 1 auto;
+  display:grid;
+  grid-template-columns: 1fr 1.05fr;
+  align-content:center;
+  gap:14mm;
+  padding:10mm var(--doc-pad);
+}
+
+.portada-titular{
+  font-family:'Inter', sans-serif;
+  font-size:15pt;
+  font-weight:600;
+  line-height:1.35;
+  letter-spacing:-0.01em;
+}
+.portada-parrafo{
+  font-size:8.5pt;
+  color:var(--doc-ink-2);
+  margin-top:6mm;
+  line-height:1.7;
+}
+.portada-parrafo strong{ color:var(--doc-ink); font-weight:600; }
+
+.atributos{ display:flex; flex-direction:column; gap:6.5mm; }
+.atributo{ display:flex; gap:4.5mm; align-items:flex-start; }
+.atributo-icono{
+  width:9mm; height:9mm;
+  border:0.5pt solid var(--doc-line);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  flex:0 0 auto;
+}
+.atributo-icono svg{ width:4.4mm; height:4.4mm; }
+.atributo-titulo{
+  font-family:'Jost', sans-serif;
+  font-size:8pt;
+  letter-spacing:0.16em;
+  color:var(--doc-ink);
+}
+.atributo-texto{
+  font-size:7.5pt;
+  color:var(--doc-ink-2);
+  line-height:1.55;
+  margin-top:1mm;
+}
+
+/* ==========================================================================
+   Página 2 — Alcance
+   ========================================================================== */
+.seccion-titulo{
+  text-align:center;
+  font-family:'Jost', sans-serif;
+  font-size:13pt;
+  letter-spacing:0.16em;
+  color:var(--doc-ink);
+}
+.seccion-regla{
+  width:16mm; height:0;
+  border-top:0.8pt solid var(--doc-gold);
+  margin:2.5mm auto 5mm;
+}
+
+.alcance{ padding:1mm var(--doc-pad) 0; }
+.alcance-bloque + .alcance-bloque{ margin-top:5.5mm; }
+
+/* El alto de fila está calibrado contra la partida más larga del tarifario
+   —Adoquines, 10 incluye + 8 no incluye— para que las 18 filas más la nota
+   al pie quepan en una sola página. Si se toca, revalidar ese caso. */
+.items{ display:flex; flex-direction:column; }
+.item{
+  display:flex;
+  align-items:center;
+  gap:4.5mm;
+  padding:1.6mm 0;
+  border-bottom:0.4pt solid var(--doc-line);
+  break-inside:avoid;
+}
+.item:first-child{ border-top:0.4pt solid var(--doc-line); }
+.item-icono{
+  width:6.4mm; height:6.4mm;
+  border:0.5pt solid var(--doc-line);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  flex:0 0 auto;
+}
+.item-icono svg{ width:3.1mm; height:3.1mm; }
+.item-texto{ font-size:8pt; color:var(--doc-ink); }
+
+.nota-pie{
+  display:flex;
+  gap:4mm;
+  align-items:flex-start;
+  margin-top:4.5mm;
+  padding-top:3.5mm;
+  border-top:0.4pt solid var(--doc-line);
+}
+.nota-pie .item-icono{ width:6.4mm; height:6.4mm; }
+.nota-pie p{ font-size:7.5pt; color:var(--doc-ink-2); line-height:1.6; }
+
+/* ==========================================================================
+   Página 3 — Presupuesto
+   ========================================================================== */
+.presupuesto{ padding:1mm var(--doc-pad) 0; }
+
+.ficha{
+  background:var(--doc-panel);
+  border-radius:var(--doc-radio);
+  padding:5.5mm 7mm;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4.5mm 8mm;
+  margin-bottom:6mm;
+}
+.ficha-campo-rotulo{
+  font-size:7.5pt;
+  color:var(--doc-ink-2);
+  margin-bottom:1mm;
+}
+.ficha-campo-valor{
+  font-size:9pt;
+  color:var(--doc-ink);
+}
+
+/* border-collapse:separate es necesario para que el redondeo tome en las
+   esquinas; con `collapse` el navegador lo ignora. */
+.desglose{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  margin-bottom:5mm;
+}
+/* El fondo va también en la fila: si el render deja un hilo subpíxel entre las
+   dos celdas, detrás sigue habiendo oscuro y no aparece la costura. */
+.desglose thead tr{ background:var(--doc-dark); }
+.desglose thead th{
+  background:var(--doc-dark);
+  color:#f4f2ec;
+  font-family:'Jost', sans-serif;
+  font-weight:400;
+  font-size:8pt;
+  letter-spacing:0.16em;
+  text-align:left;
+  padding:3.6mm 5mm;
+}
+.desglose thead th:first-child{ border-top-left-radius:var(--doc-radio); }
+.desglose thead th:last-child{ border-top-right-radius:var(--doc-radio); text-align:right; }
+
+.desglose tbody td{
+  font-size:8.5pt;
+  padding:2.8mm 5mm;
+  border-bottom:0.4pt solid var(--doc-line);
+}
+.desglose tbody td:first-child{ border-left:0.4pt solid var(--doc-line); }
+.desglose tbody td:last-child{
+  border-right:0.4pt solid var(--doc-line);
+  text-align:right;
+  white-space:nowrap;
+}
+.desglose tbody tr:last-child td:first-child{ border-bottom-left-radius:var(--doc-radio); }
+.desglose tbody tr:last-child td:last-child{ border-bottom-right-radius:var(--doc-radio); }
+.desglose tbody tr{ break-inside:avoid; }
+.desglose tbody tr:nth-child(even){ background:rgba(0,0,0,.015); }
+
+/* Bloque de cierre: NETO / IVA / TOTAL.
+   La referencia sólo trae TOTAL NETO; el usuario pidió las tres líneas. */
+.totales{ margin-bottom:6mm; }
+.totales-fila{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  padding:2.2mm 5mm;
+  font-size:9pt;
+  color:var(--doc-ink-2);
+}
+.totales-fila + .totales-fila{ border-top:0.4pt solid var(--doc-line); }
+.totales-fila.es-total{
+  background:var(--doc-panel);
+  border-radius:var(--doc-radio);
+  padding:3.8mm 5mm;
+  border-top:none;
+  margin-top:1.5mm;
+}
+.totales-fila.es-total .totales-rotulo{
+  font-family:'Jost', sans-serif;
+  font-size:11pt;
+  letter-spacing:0.16em;
+  color:var(--doc-ink);
+}
+.totales-fila.es-total .totales-monto{
+  font-family:'Jost', sans-serif;
+  font-size:17pt;
+  letter-spacing:0.02em;
+  color:var(--doc-ink);
+}
+.totales-rotulo{ font-family:'Jost', sans-serif; letter-spacing:0.12em; }
+.totales-monto{ white-space:nowrap; }
+
+.avisos{ display:flex; flex-direction:column; gap:4mm; margin-bottom:5mm; }
+.aviso{ display:flex; gap:4.5mm; align-items:flex-start; }
+.aviso .item-icono{ width:8mm; height:8mm; }
+.aviso-titulo{
+  font-family:'Jost', sans-serif;
+  font-size:8pt;
+  letter-spacing:0.16em;
+  margin-bottom:1.4mm;
+}
+.aviso-texto{ font-size:7.5pt; color:var(--doc-ink-2); line-height:1.6; }
+
+.cierre{
+  text-align:center;
+  font-family:'Jost', sans-serif;
+  font-size:11pt;
+  letter-spacing:0.16em;
+  line-height:1.7;
+  color:var(--doc-ink);
+  padding:3mm 0 4mm;
+}
+
+/* --- Continuación en página 4 -------------------------------------------- */
+.continuacion{
+  font-size:7.5pt;
+  color:var(--doc-ink-2);
+  font-style:italic;
+  padding:2mm 5mm 0;
+}
+
+/* ==========================================================================
+   Íconos: trazo fino, sin relleno
+   ========================================================================== */
+.doc svg{ fill:none; stroke:var(--doc-gold); stroke-width:1.3; stroke-linecap:round; stroke-linejoin:round; }
+.doc .marca-sello svg{ stroke:var(--doc-gold); }
+.item-icono svg{ stroke:var(--doc-gold); }
+.item-icono.es-negativo svg{ stroke:var(--doc-ink-2); stroke-width:1.5; }
+
+/* ==========================================================================
+   Pantalla — sólo para revisar antes de imprimir
+   ========================================================================== */
+@media screen{
+  .doc{
+    background:#e8e6e0;
+    padding:10mm 0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8mm;
+  }
+  .pagina{ box-shadow:0 2mm 8mm rgba(0,0,0,.16); }
+}
+
+/* ==========================================================================
+   Impresión / PDF
+   ========================================================================== */
+@page{ size:A4 portrait; margin:0; }
+
+@media print{
+  html, body{
+    margin:0; padding:0;
+    background:#fff;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  .doc{ background:none; padding:0; gap:0; display:block; }
+  .pagina{ box-shadow:none; margin:0; }
+  .no-imprimir{ display:none !important; }
+}
