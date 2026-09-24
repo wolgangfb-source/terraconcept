@@ -208,10 +208,12 @@
 
 /* ==========================================================================
    Páginas finales — Propuestas de diseño
-   Reutiliza .portada-hero (misma foto a sangre + velo + texto superpuesto)
-   pero ocupando toda la página, ya que aquí no hay ficha inferior.
+   Reutiliza .portada-hero (misma foto a sangre + texto superpuesto) pero
+   ocupando toda la página —no hay ficha inferior— y sin el velo oscuro: acá
+   la foto es el diseño propuesto, no debe verse ensombrecida.
    ========================================================================== */
 .portada-hero.es-propuesta{ height:auto; flex:1 1 auto; }
+.portada-hero.es-propuesta::after{ display:none; }
 
 .atributos{ display:flex; flex-direction:column; gap:6.5mm; }
 .atributo{ display:flex; gap:4.5mm; align-items:flex-start; }
