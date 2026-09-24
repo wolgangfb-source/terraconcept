@@ -167,7 +167,7 @@ button, input, select, textarea{ font-family:inherit; font-size:inherit; color:i
 .filas{ display:flex; flex-direction:column; gap:8px; }
 .fila{
   display:grid;
-  grid-template-columns:1fr 54px 80px 88px 22px;
+  grid-template-columns:1fr 54px 80px 88px 62px;
   gap:6px; align-items:center;
 }
 .fila input{
@@ -179,15 +179,19 @@ button, input, select, textarea{ font-family:inherit; font-size:inherit; color:i
 }
 .fila input:focus{ outline:none; border-color:var(--green-2); }
 .fila input.num{ text-align:right; }
-.fila-quitar{
+.fila-acciones{ display:flex; align-items:center; gap:1px; justify-content:flex-end; }
+.fila-mover, .fila-quitar{
   border:0; background:transparent;
   color:var(--stone); cursor:pointer;
   font-size:17px; line-height:1; padding:2px;
 }
+.fila-mover{ font-size:12px; padding:2px 3px; }
+.fila-mover:hover:not(:disabled){ color:var(--green-2); }
+.fila-mover:disabled{ opacity:.3; cursor:default; }
 .fila-quitar:hover{ color:var(--danger); }
 .filas-cabecera{
   display:grid;
-  grid-template-columns:1fr 54px 80px 88px 22px;
+  grid-template-columns:1fr 54px 80px 88px 62px;
   gap:6px;
   font-size:10px; letter-spacing:.06em; text-transform:uppercase;
   color:var(--stone);
@@ -219,6 +223,33 @@ button, input, select, textarea{ font-family:inherit; font-size:inherit; color:i
 
 .acciones{ display:flex; gap:8px; margin-top:20px; }
 .acciones .btn{ flex:1; }
+
+/* ==========================================================================
+   Propuestas de diseño — hasta 5 imágenes que se agregan al final del PDF
+   ========================================================================== */
+.propuestas-lista{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:8px;
+  margin-top:10px;
+}
+.propuesta-mini{
+  position:relative;
+  aspect-ratio:4/3;
+  border-radius:2px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  background:var(--cream-2);
+}
+.propuesta-mini img{ width:100%; height:100%; object-fit:cover; display:block; }
+.propuesta-quitar{
+  position:absolute; top:3px; right:3px;
+  width:18px; height:18px;
+  border:0; border-radius:50%;
+  background:rgba(28,43,31,.75); color:var(--cream);
+  cursor:pointer; font-size:12px; line-height:1;
+}
+.propuesta-quitar:hover{ background:var(--danger); }
 
 /* ==========================================================================
    Listado de cotizaciones
@@ -352,13 +383,13 @@ button, input, select, textarea{ font-family:inherit; font-size:inherit; color:i
   .campo-fila{ grid-template-columns:1fr; }
 
   .filas-cabecera{ display:none; }
-  .fila{ grid-template-columns:repeat(3, 1fr) 24px; gap:6px; }
+  .fila{ grid-template-columns:repeat(3, 1fr) 62px; gap:6px; }
   .fila input:first-child{ grid-column:1 / -1; }
   .fila input{ padding:9px 8px; }
 
   /* La fila de descuento no tiene cantidad ni precio unitario: la celda
      vacía sobra, así que se oculta y el % + valor se reparten el espacio. */
-  .fila.es-descuento{ grid-template-columns:1fr 1fr 24px; }
+  .fila.es-descuento{ grid-template-columns:1fr 1fr 62px; }
   .fila.es-descuento span{ display:none; }
 }
 

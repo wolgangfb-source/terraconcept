@@ -37,6 +37,7 @@ function nuevaCotizacion() {
     validez_dias: 7,
     plazo_ejecucion: '',
     detalle: [],
+    imagenes: [],          // "Propuestas de diseño": hasta 5, {nombre, dataUrl}
   };
 }
 
@@ -227,7 +228,9 @@ function reiniciar() {
 
   bloquearEstado(true);
   mostrarAviso('');
+  $('f-imagenes').value = '';
   pintarFilas();
+  pintarImagenes();
   render();
 }
 
@@ -400,6 +403,13 @@ function pintarFilas() {
     const fila = document.createElement('div');
     fila.className = 'fila';
 
+    const controles = `
+        <div class="fila-acciones">
+          <button class="fila-mover" data-mover="arriba" title="Subir" ${i === 0 ? 'disabled' : ''}>▲</button>
+          <button class="fila-mover" data-mover="abajo" title="Bajar" ${i === cot.detalle.length - 1 ? 'disabled' : ''}>▼</button>
+          <button class="fila-quitar" title="Quitar fila">×</button>
+        </div>`;
+
     if (d._descuento) {
       fila.classList.add('es-descuento');
       fila.innerHTML = `
@@ -407,7 +417,7 @@ function pintarFilas() {
         <input type="number" class="num" value="${d.porcentaje ?? ''}" placeholder="%" step="0.1" min="0" max="100" data-c="porcentaje">
         <span></span>
         <input type="text" class="num" value="${clp(d.valor)}" data-c="valor" disabled>
-        <button class="fila-quitar" title="Quitar fila">×</button>`;
+        ${controles}`;
 
       fila.querySelector('[data-c="descripcion"]').addEventListener('input', (e) => {
         d.descripcion = e.target.value;
@@ -424,7 +434,7 @@ function pintarFilas() {
         <input type="number" class="num" value="${d.cantidad ?? ''}" placeholder="—" step="0.01" data-c="cantidad">
         <input type="number" class="num" value="${d.precio_unitario ?? ''}" placeholder="—" step="1" data-c="precio_unitario">
         <input type="number" class="num" value="${d.valor ?? 0}" placeholder="0" step="1" data-c="valor">
-        <button class="fila-quitar" title="Quitar fila">×</button>`;
+        ${controles}`;
 
       const inputValor = fila.querySelector('[data-c="valor"]');
 
@@ -461,6 +471,16 @@ function pintarFilas() {
       render();
     });
 
+    fila.querySelectorAll('.fila-mover').forEach((b) => {
+      b.addEventListener('click', () => {
+        const destino = b.dataset.mover === 'arriba' ? i - 1 : i + 1;
+        if (destino < 0 || destino >= cot.detalle.length) return;
+        [cot.detalle[i], cot.detalle[destino]] = [cot.detalle[destino], cot.detalle[i]];
+        pintarFilas();
+        render();
+      });
+    });
+
     cont.appendChild(fila);
   });
 
@@ -485,6 +505,81 @@ function recalcular() {
     }
   });
   $('r-total').textContent = clp(totales().total);
+}
+
+// ---------------------------------------------------------------------------
+// Propuestas de diseño (hasta 5 imágenes, al final del documento)
+// ---------------------------------------------------------------------------
+const MAX_IMAGENES = 5;
+
+// Se redimensionan en el navegador antes de guardarlas: van como dataURL en
+// una columna jsonb (sin bucket de Storage que mantener), así que conviene
+// acotar el peso. 1600 px de ancho alcanza de sobra para una página A4.
+function comprimirImagen(file, anchoMax = 1600, calidad = 0.82) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const escala = Math.min(1, anchoMax / img.width);
+      const w = Math.round(img.width * escala);
+      const h = Math.round(img.height * escala);
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', calidad));
+      URL.revokeObjectURL(img.src);
+    };
+    img.onerror = () => reject(new Error('No se pudo leer la imagen.'));
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+$('f-imagenes').addEventListener('change', async (e) => {
+  const archivos = Array.from(e.target.files || []);
+  e.target.value = '';
+  if (!archivos.length) return;
+
+  const cupo = MAX_IMAGENES - cot.imagenes.length;
+  if (cupo <= 0) {
+    mostrarAviso(`Ya hay ${MAX_IMAGENES} imágenes cargadas. Quita alguna para agregar otra.`, 'error');
+    return;
+  }
+
+  cargando(true);
+  try {
+    for (const file of archivos.slice(0, cupo)) {
+      const dataUrl = await comprimirImagen(file);
+      cot.imagenes.push({ nombre: file.name, dataUrl });
+    }
+    if (archivos.length > cupo) {
+      mostrarAviso(`Sólo se agregaron ${cupo}: el máximo son ${MAX_IMAGENES} imágenes.`, '');
+    }
+    pintarImagenes();
+    render();
+  } catch (err) {
+    mostrarAviso('No se pudo cargar la imagen: ' + err.message, 'error');
+  } finally {
+    cargando(false);
+  }
+});
+
+function pintarImagenes() {
+  const cont = $('propuestas-lista');
+  cont.innerHTML = '';
+  cot.imagenes.forEach((img, i) => {
+    const mini = document.createElement('div');
+    mini.className = 'propuesta-mini';
+    mini.innerHTML = `
+      <img src="${img.dataUrl}" alt="${esc(img.nombre)}">
+      <button class="propuesta-quitar" title="Quitar imagen">×</button>`;
+    mini.querySelector('.propuesta-quitar').addEventListener('click', () => {
+      cot.imagenes.splice(i, 1);
+      pintarImagenes();
+      render();
+    });
+    cont.appendChild(mini);
+  });
+  $('f-imagenes').disabled = cot.imagenes.length >= MAX_IMAGENES;
 }
 
 // ---------------------------------------------------------------------------
@@ -651,8 +746,32 @@ function paginaPresupuesto() {
   </section>`;
 }
 
+// Una página por imagen, con el mismo tratamiento que la foto de portada
+// (a sangre, con velo y texto superpuesto), para que "Propuestas de diseño"
+// se vea como una continuación natural de la página 1.
+function paginaPropuesta(img, i, total) {
+  return `<section class="pagina">
+    ${cabecera()}
+    <div class="pagina-cuerpo portada">
+      <div class="portada-hero es-propuesta">
+        <img src="${img.dataUrl}" alt="${esc(img.nombre)}">
+        <div class="portada-hero-texto">
+          <div class="portada-hero-rotulo">PROPUESTAS DE DISEÑO</div>
+          <div class="portada-hero-titulo">${String(i + 1).padStart(2, '0')}</div>
+          <div class="portada-hero-bajada">${i + 1} de ${total}</div>
+        </div>
+      </div>
+    </div>
+    ${pie()}
+  </section>`;
+}
+
+function paginasPropuestas() {
+  return cot.imagenes.map((img, i) => paginaPropuesta(img, i, cot.imagenes.length)).join('');
+}
+
 function render() {
-  $('doc').innerHTML = paginaPortada() + paginaAlcance() + paginaPresupuesto();
+  $('doc').innerHTML = paginaPortada() + paginaAlcance() + paginaPresupuesto() + paginasPropuestas();
   document.title = cot.numero
     ? `Cotizacion-${folio(cot.numero)}-${(cot.cliente.nombre || 'sin-cliente').replace(/\s+/g, '-')}`
     : 'Cotizador — Terra Concept';
@@ -733,6 +852,7 @@ async function guardar() {
       neto: t.neto,
       total: t.total,
       snapshot,
+      imagenes: cot.imagenes,
     };
 
     // 3. Cabecera. El correlativo lo pone la DB (secuencia desde 5), nunca el
@@ -1012,6 +1132,7 @@ async function abrirCotizacion(id, duplicar) {
       descripcion: d.descripcion, cantidad: d.cantidad, unidad: d.unidad,
       precio_unitario: d.precio_unitario, valor: d.valor, _auto: false,
     }));
+    cot.imagenes = Array.isArray(c.imagenes) ? c.imagenes : [];
 
     volcarAlFormulario();
     verVista('editor');
@@ -1057,7 +1178,9 @@ function volcarAlFormulario() {
   // puede cambiar de estado.
   bloquearEstado(cot.id === null);
   validarMinimo();
+  $('f-imagenes').value = '';
   pintarFilas();
+  pintarImagenes();
   render();
 }
 

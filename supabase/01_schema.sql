@@ -168,6 +168,15 @@ create table if not exists cotizaciones (
 alter table cotizaciones drop column if exists iva_pct;
 alter table cotizaciones drop column if exists iva_monto;
 
+-- Fotos de referencia que el cliente aprueba junto con la cotización. Van
+-- como jsonb (arreglo de {nombre, dataUrl}, hasta 5) en vez de Supabase
+-- Storage: no hay bucket ni políticas que mantener, y el límite de 5 fotos
+-- comprimidas en el navegador mantiene el tamaño acotado. Se imprimen al
+-- final del documento, una por página, con el mismo tratamiento que la foto
+-- de portada.
+alter table cotizaciones add column if not exists imagenes jsonb not null default '[]'::jsonb;
+comment on column cotizaciones.imagenes is 'Hasta 5 fotos de "Propuestas de diseño": [{nombre, dataUrl}]. Se imprimen al final del documento.';
+
 create index if not exists cotizaciones_numero_idx  on cotizaciones (numero desc);
 create index if not exists cotizaciones_cliente_idx on cotizaciones (cliente_id);
 create index if not exists cotizaciones_estado_idx  on cotizaciones (estado);
