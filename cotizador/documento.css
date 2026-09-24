@@ -209,17 +209,20 @@
 /* ==========================================================================
    Páginas finales — Propuestas de diseño
    Reutiliza .portada-hero (misma foto a sangre + texto superpuesto) pero
-   ocupando toda la página —no hay ficha inferior— y sin el velo sobre toda
-   la foto: acá la foto es el diseño propuesto, no debe verse ensombrecida.
-   El sombreado queda sólo como fondo detrás del rótulo, para que se lea
-   sin importar qué tan clara sea la foto de fondo.
-   ========================================================================== */
+   ocupando toda la página —no hay ficha inferior. El rótulo va anclado a la
+   esquina inferior derecha, con un sombreado que nace ahí y se apaga hacia
+   el centro: el resto de la foto —el diseño propuesto— queda sin ensombrecer.
+   Mismo motivo que el velo de portada para ir como SVG y no como
+   linear-/radial-gradient de CSS: html2canvas (PDF para compartir) no lo
+   interpreta. */
 .portada-hero.es-propuesta{ height:auto; flex:1 1 auto; }
-.portada-hero.es-propuesta::after{ display:none; }
+.portada-hero.es-propuesta::after{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='1' y1='1' x2='0' y2='0'%3E%3Cstop offset='0' stop-color='%23141814' stop-opacity='.62'/%3E%3Cstop offset='.32' stop-color='%23141814' stop-opacity='.34'/%3E%3Cstop offset='.62' stop-color='%23141814' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23g)'/%3E%3C/svg%3E");
+}
 .portada-hero.es-propuesta .portada-hero-texto{
-  background:rgba(20, 24, 20, .55);
-  padding:6mm 9mm;
-  border-radius:1mm;
+  top:auto;
+  bottom:var(--doc-pad);
+  transform:none;
 }
 
 .atributos{ display:flex; flex-direction:column; gap:6.5mm; }
