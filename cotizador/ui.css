@@ -197,6 +197,13 @@ button, input, select, textarea{ font-family:inherit; font-size:inherit; color:i
 .filas-cabecera span:nth-child(3),
 .filas-cabecera span:nth-child(4){ text-align:right; }
 
+.filas-botones{ display:flex; gap:8px; }
+
+.fila.es-descuento input[data-c="valor"]{
+  color:var(--danger); font-weight:500;
+  background:var(--cream-2); border-style:dashed;
+}
+
 .resumen{
   margin-top:14px; padding-top:12px;
   border-top:1px solid var(--line);
@@ -348,6 +355,11 @@ button, input, select, textarea{ font-family:inherit; font-size:inherit; color:i
   .fila{ grid-template-columns:repeat(3, 1fr) 24px; gap:6px; }
   .fila input:first-child{ grid-column:1 / -1; }
   .fila input{ padding:9px 8px; }
+
+  /* La fila de descuento no tiene cantidad ni precio unitario: la celda
+     vacía sobra, así que se oculta y el % + valor se reparten el espacio. */
+  .fila.es-descuento{ grid-template-columns:1fr 1fr 24px; }
+  .fila.es-descuento span{ display:none; }
 }
 
 /* ==========================================================================

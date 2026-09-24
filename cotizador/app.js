@@ -60,8 +60,10 @@ function fechaLarga(iso) {
 }
 
 // CLP: sin decimales y con punto de miles, como en la cotización de referencia.
+// Filas negativas (descuentos) muestran el signo antes del "$", no después.
 function clp(n) {
-  return '$ ' + Math.round(n || 0).toLocaleString('es-CL');
+  const v = Math.round(n || 0);
+  return (v < 0 ? '-$ ' : '$ ') + Math.abs(v).toLocaleString('es-CL');
 }
 
 function folio(n) {
@@ -367,6 +369,29 @@ $('btn-agregar').addEventListener('click', () => {
   render();
 });
 
+// El descuento es un % que el usuario escribe a mano; el valor de la fila se
+// calcula solo, sobre la suma de las demás filas (ver recalcularDescuentos).
+$('btn-descuento').addEventListener('click', () => {
+  cot.detalle.push({
+    descripcion: 'Descuento', cantidad: null, unidad: null, precio_unitario: null,
+    valor: 0, _descuento: true, porcentaje: null,
+  });
+  pintarFilas();
+  render();
+});
+
+// El % de cada fila de descuento se aplica sobre la suma de las filas que no
+// son descuento, nunca sobre otro descuento: así dos descuentos no se
+// componen entre sí y el orden en que se agregan no cambia el resultado.
+function recalcularDescuentos() {
+  const base = cot.detalle
+    .filter((d) => !d._descuento)
+    .reduce((s, d) => s + (Number(d.valor) || 0), 0);
+  cot.detalle.forEach((d) => {
+    if (d._descuento) d.valor = -Math.round(base * (Number(d.porcentaje) || 0) / 100);
+  });
+}
+
 function pintarFilas() {
   const cont = $('filas');
   cont.innerHTML = '';
@@ -374,40 +399,61 @@ function pintarFilas() {
   cot.detalle.forEach((d, i) => {
     const fila = document.createElement('div');
     fila.className = 'fila';
-    fila.innerHTML = `
-      <input type="text"   value="${esc(d.descripcion)}" placeholder="Descripción" data-c="descripcion">
-      <input type="number" class="num" value="${d.cantidad ?? ''}" placeholder="—" step="0.01" data-c="cantidad">
-      <input type="number" class="num" value="${d.precio_unitario ?? ''}" placeholder="—" step="1" data-c="precio_unitario">
-      <input type="number" class="num" value="${d.valor ?? 0}" placeholder="0" step="1" data-c="valor">
-      <button class="fila-quitar" title="Quitar fila">×</button>`;
 
-    const inputValor = fila.querySelector('[data-c="valor"]');
+    if (d._descuento) {
+      fila.classList.add('es-descuento');
+      fila.innerHTML = `
+        <input type="text"   value="${esc(d.descripcion)}" placeholder="Descuento" data-c="descripcion">
+        <input type="number" class="num" value="${d.porcentaje ?? ''}" placeholder="%" step="0.1" min="0" max="100" data-c="porcentaje">
+        <span></span>
+        <input type="text" class="num" value="${clp(d.valor)}" data-c="valor" disabled>
+        <button class="fila-quitar" title="Quitar fila">×</button>`;
 
-    fila.querySelectorAll('input').forEach((inp) => {
-      inp.addEventListener('input', () => {
-        const c = inp.dataset.c;
-        // Editar cualquier campo a mano desengancha la fila de la propuesta
-        // automática, para no pisar lo que escribió el usuario.
-        d._auto = false;
-
-        if (c === 'descripcion') {
-          d.descripcion = inp.value;
-        } else if (c === 'valor') {
-          // Escribir el valor a mano manda: hay filas sin cantidad ni precio
-          // unitario que tengan sentido, como "Logística y traslado".
-          d.valor = Number(inp.value || 0);
-        } else {
-          d[c] = inp.value === '' ? null : Number(inp.value);
-          // Con cantidad y precio unitario, el valor se calcula solo.
-          if (d.cantidad != null && d.precio_unitario != null) {
-            d.valor = Math.round(d.cantidad * d.precio_unitario);
-            inputValor.value = d.valor;
-          }
-        }
+      fila.querySelector('[data-c="descripcion"]').addEventListener('input', (e) => {
+        d.descripcion = e.target.value;
+        render();
+      });
+      fila.querySelector('[data-c="porcentaje"]').addEventListener('input', (e) => {
+        d.porcentaje = e.target.value === '' ? null : Number(e.target.value);
         recalcular();
         render();
       });
-    });
+    } else {
+      fila.innerHTML = `
+        <input type="text"   value="${esc(d.descripcion)}" placeholder="Descripción" data-c="descripcion">
+        <input type="number" class="num" value="${d.cantidad ?? ''}" placeholder="—" step="0.01" data-c="cantidad">
+        <input type="number" class="num" value="${d.precio_unitario ?? ''}" placeholder="—" step="1" data-c="precio_unitario">
+        <input type="number" class="num" value="${d.valor ?? 0}" placeholder="0" step="1" data-c="valor">
+        <button class="fila-quitar" title="Quitar fila">×</button>`;
+
+      const inputValor = fila.querySelector('[data-c="valor"]');
+
+      fila.querySelectorAll('input').forEach((inp) => {
+        inp.addEventListener('input', () => {
+          const c = inp.dataset.c;
+          // Editar cualquier campo a mano desengancha la fila de la propuesta
+          // automática, para no pisar lo que escribió el usuario.
+          d._auto = false;
+
+          if (c === 'descripcion') {
+            d.descripcion = inp.value;
+          } else if (c === 'valor') {
+            // Escribir el valor a mano manda: hay filas sin cantidad ni precio
+            // unitario que tengan sentido, como "Logística y traslado".
+            d.valor = Number(inp.value || 0);
+          } else {
+            d[c] = inp.value === '' ? null : Number(inp.value);
+            // Con cantidad y precio unitario, el valor se calcula solo.
+            if (d.cantidad != null && d.precio_unitario != null) {
+              d.valor = Math.round(d.cantidad * d.precio_unitario);
+              inputValor.value = d.valor;
+            }
+          }
+          recalcular();
+          render();
+        });
+      });
+    }
 
     fila.querySelector('.fila-quitar').addEventListener('click', () => {
       cot.detalle.splice(i, 1);
@@ -428,6 +474,16 @@ function totales() {
 }
 
 function recalcular() {
+  recalcularDescuentos();
+  // Sólo se toca el campo "valor" (deshabilitado) de las filas de descuento:
+  // así no se pierde el foco del input que el usuario esté editando.
+  document.querySelectorAll('#filas .fila').forEach((fila, i) => {
+    const d = cot.detalle[i];
+    if (d && d._descuento) {
+      const campo = fila.querySelector('[data-c="valor"]');
+      if (campo) campo.value = clp(d.valor);
+    }
+  });
   $('r-total').textContent = clp(totales().total);
 }
 
