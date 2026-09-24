@@ -209,11 +209,18 @@
 /* ==========================================================================
    Páginas finales — Propuestas de diseño
    Reutiliza .portada-hero (misma foto a sangre + texto superpuesto) pero
-   ocupando toda la página —no hay ficha inferior— y sin el velo oscuro: acá
-   la foto es el diseño propuesto, no debe verse ensombrecida.
+   ocupando toda la página —no hay ficha inferior— y sin el velo sobre toda
+   la foto: acá la foto es el diseño propuesto, no debe verse ensombrecida.
+   El sombreado queda sólo como fondo detrás del rótulo, para que se lea
+   sin importar qué tan clara sea la foto de fondo.
    ========================================================================== */
 .portada-hero.es-propuesta{ height:auto; flex:1 1 auto; }
 .portada-hero.es-propuesta::after{ display:none; }
+.portada-hero.es-propuesta .portada-hero-texto{
+  background:rgba(20, 24, 20, .55);
+  padding:6mm 9mm;
+  border-radius:1mm;
+}
 
 .atributos{ display:flex; flex-direction:column; gap:6.5mm; }
 .atributo{ display:flex; gap:4.5mm; align-items:flex-start; }
